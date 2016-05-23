@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -7,9 +6,172 @@
     <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
   </head>
   <body class="mixpanel-platform-body">
-    <h1>Hello, World!</h1>
-    <script>
-      // Run queries and display results here
-    </script>
+  <script id='query_one'>
+    function main() {
+      return Events({
+        from_date: params.from_date,
+        to_date: params.to_date,
+        event_selectors: [{event: "Viewed docs"}, {event: "Blog - Post Viewed"}, {event: "Help Center"}, {event: "Landing- Education Videos"}, {event: "Docs - vote"}]
+      })
+      .filter(function(event) {
+      if(event.name == "Blog - Post Viewed") {
+        if(event.properties.title !== undefined && event.properties.title.indexOf("Community Tip") > -1) {
+          return event;
+        }
+      } else if(event.name == "Help Center") {
+        if(event.properties.page !== undefined && event.properties.page != "/help/questions") {
+          return event;
+        }
+      } else {
+        return event;
+      }
+    })
+    .groupByUser(['properties.$current_url', 'properties.Email', 'name', 'properties.helpful', 'properties.$referrer', 'distinct_id'], mixpanel.reducer.count());
+  }
+  </script>
+  <script id='query_two'>
+    function main() {
+      return People()
+      .filter(function(user) { return user.properties.$email !== undefined && user.properties['Account Status'] == 'Paying' })
+      .groupByUser(['properties.$email'], mixpanel.reducer.count());
+  }
+  </script>
+  Date: <br>
+  <div id="dateSelect"></div>
+  <div id="table" style='width:943px'></div><br>
+  <script>
+  var script_one = document.getElementById('query_one').innerHTML;
+  var script_two = document.getElementById('query_two').innerHTML;
+  var dateSelect = $('#dateSelect').MPDatepicker();
+  var eventTable = $('#table').MPTable({showPercentages: false, firstColHeader: 'Frequency'});
+  function runQuery() {
+    var params = {
+      'from_date': dateSelect.MPDatepicker('value').from.toISOString().slice(0, -14),
+      'to_date': dateSelect.MPDatepicker('value').to.toISOString().slice(0, -14),
+    };
+    MP.api.jql(script_one, params).done(function(results) {
+      MP.api.jql(script_two, {}).done(function(users) {
+        var domains = [];
+        var paidID = []; var freeID = []; var internalID = [];
+        //console.log(results);
+        //console.log(users);
+        _.each(users, function(item){
+          if(item.key[1] !== undefined) {
+            domains.push(item.key[1].split("@")[1]);
+          }
+        });
+        var res = {}; var toSort = []; var sorted = []; var final = {};
+        var kpis = {};
+        _.each(results, function(item) {
+          // If doc does not yet exist
+          if(res[item.key[1]] === undefined) {
+            if(item.key[3] != 'Docs - vote') {
+              res[item.key[1]] = {'Document URL': item.key[1], 'Total Views': item.value, 'Unique Views': 1, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': 0, 'Not Helpful': 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0};
+              // Paid user
+              if(item.key[2] !== null && domains.indexOf(item.key[2].split("@")[1]) > -1 && item.key[2].split("@")[1] != "mixpanel.com") {
+                res[item.key[1]]['Internal Views'] = 0;
+                res[item.key[1]]['Paid Views'] = item.value;
+                res[item.key[1]]['Free Views'] = 0;
+                if(paidID.indexOf(item.key[6]) == -1) {
+                  paidID.push(item.key[6]);
+                  res[item.key[1]]['Paid Users'] += 1;
+                }
+              } // Mixpanel user
+              else if (item.key[2] !== null && item.key[2].split("@")[1] == "mixpanel.com") {
+                res[item.key[1]]['Internal Views'] = item.value;
+                res[item.key[1]]['Paid Views'] = 0;
+                res[item.key[1]]['Free Views'] = 0;
+                if(internalID.indexOf(item.key[6]) == -1) {
+                  internalID.push(item.key[6]);
+                  res[item.key[1]]['Internal Users'] += 1;
+                }
+              } // Free user
+              else {
+                res[item.key[1]]['Internal Views'] = 0;
+                res[item.key[1]]['Paid Views'] = 0;
+                res[item.key[1]]['Free Views'] = item.value;
+                if(freeID.indexOf(item.key[6]) == -1) {
+                  freeID.push(item.key[6]);
+                  res[item.key[1]]['Free Users'] += 1;
+                }
+              } // Search engine info
+              if(item.key[5] !== undefined && item.key[5] !== null) {
+                if(item.key[5].indexOf("help/questions/search") > -1) {
+                  res[item.key[1]]['Via MP Search'] = 1;
+                } else if(item.key[5].indexOf("google") > -1 || item.key[5].indexOf("bing") > -1 || item.key[5].indexOf("yahoo") > -1 || item.key[5].indexOf("baidu") > -1) {
+                  res[item.key[1]]['Via Search'] = 1;
+                }
+              }
+            } // If first doc is a vote, create differently
+            else {
+                res[item.key[1]] = {'Document URL': item.key[1], 'Total Views': item.value, 'Unique Views': 1, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': (item.key[4] == 'yes') ? 1: 0, 'Not Helpful': (item.key[4] == 'no') ? 1: 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0};
+            }
+          } // If doc already exists
+          else {
+            if(item.key[3] != 'Docs - vote') {
+              res[item.key[1]]['Total Views'] += item.value;
+              res[item.key[1]]['Unique Views'] += 1;
+              // Paid user
+              if(item.key[2] !== null && domains.indexOf(item.key[2].split("@")[1]) > -1  && item.key[2].split("@")[1] != "mixpanel.com") {
+                res[item.key[1]]['Paid Views'] += item.value;
+                if(paidID.indexOf(item.key[6]) == -1) {
+                  paidID.push(item.key[6]);
+                  res[item.key[1]]['Paid Users'] += 1;
+                }
+              } // Mixpanel user
+              else if (item.key[2] !== null && item.key[2].split("@")[1] == "mixpanel.com") {
+                res[item.key[1]]['Internal Views'] += item.value;
+                if(internalID.indexOf(item.key[6]) == -1) {
+                  internalID.push(item.key[6]);
+                  res[item.key[1]]['Internal Users'] += 1;
+                }
+              } // Free user
+              else {
+                res[item.key[1]]['Free Views'] += item.value;
+                if(freeID.indexOf(item.key[6]) == -1) {
+                  freeID.push(item.key[6]);
+                  res[item.key[1]]['Free Users'] += 1;
+                }
+              } // Search engine info
+              if(item.key[5] !== undefined && item.key[5] !== null) {
+                if(item.key[5].indexOf("help/questions/search") > -1) {
+                  res[item.key[1]]['Via MP Search'] += 1;
+                } else if(item.key[5].indexOf("google") > -1 || item.key[5].indexOf("bing") > -1 || item.key[5].indexOf("yahoo") > -1 || item.key[5].indexOf("baidu") > -1) {
+                  res[item.key[1]]['Via Search'] += 1;
+                }
+              }
+            } // If doc is a vote, add to the count only
+            else {
+              if(item.key[4] == 'yes') { 
+                res[item.key[1]]['Helpful'] += 1;
+              } else if(item.key[4] == 'no') {
+                res[item.key[1]]['Not Helpful'] += 1;
+              }
+            }
+          }
+        });
+        for (var key in res) {
+          toSort.push({key:key,total:res[key]['Total Views']});
+        }
+        var sorted = _.sortBy( toSort, 'total' ).reverse();
+        for (var i=1; i<sorted.length; i++) {
+          final[i] = res[sorted[i-1].key];
+          kpis[i] = {};
+        }
+        var keys = Object.keys(final);
+        for (var i=0; i<keys.length; i++) {
+          kpis[keys[i]]['Document'] = '<a href="' + final[keys[i]]['Document URL'] + '">' + final[keys[i]]['Document URL'] + '</a>';
+          kpis[keys[i]]['Views per user'] = parseFloat(final[keys[i]]['Total Views'] / final[keys[i]]['Unique Views']).toFixed(2);
+          kpis[keys[i]]['Views per free user'] = parseFloat(final[keys[i]]['Free Views'] / final[keys[i]]['Free Users']).toFixed(2);
+          kpis[keys[i]]['Views per paid user'] = parseFloat(final[keys[i]]['Paid Views'] / final[keys[i]]['Paid Users']).toFixed(2);
+          kpis[keys[i]]['Views per Mixpanel user'] = parseFloat(final[keys[i]]['Internal Views'] / final[keys[i]]['Internal Users']).toFixed(2);
+        }
+        eventTable.MPTable('setData', kpis);
+      });
+    });
+  }
+  dateSelect.on('change', function() {runQuery();});
+  runQuery();
+  </script>
   </body>
 </html>
