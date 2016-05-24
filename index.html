@@ -27,7 +27,7 @@
         return event;
       }
     })
-    .groupByUser(['properties.$current_url', 'properties.Email', 'name', 'properties.helpful', 'properties.$referrer', 'distinct_id', 'properties.Date Joined'], mixpanel.reducer.count());
+    .groupByUser(['properties.article', 'properties.Email', 'name', 'properties.helpful', 'properties.$referrer', 'distinct_id', 'properties.Date Joined'], mixpanel.reducer.count());
   }
   </script>
   <script id='query_two'>
@@ -52,31 +52,31 @@
     };
     MP.api.jql(script_one, params).done(function(results) {
       MP.api.jql(script_two, {}).done(function(users) {
-        var domains = [];
-        var IDs = {}; var paidIDs = {}; var internalIDs = {}; var freeIDs = {}; var knownIDs = {};
-        var total = 0;
-        //console.log(results);
-        //console.log(users);
+        // define local vars
+        var domains = [];vvar IDs = {}; var paidIDs = {}; var internalIDs = {}; var freeIDs = {}; var knownIDs = {}; var res = {}; var toSort = []; var sorted = []; var final = {}; var kpis = {};var total = 0;
+        // iterate through the user results to find paid customers
         _.each(users, function(item){
           if(item.key[1] !== undefined) {
             domains.push(item.key[1].split("@")[1]);
           }
         });
-        var res = {}; var toSort = []; var sorted = []; var final = {};
-        var kpis = {};
+        // iterate through event results to count doc metrics
         _.each(results, function(item) {
-          // If doc does not yet exist
+          // if doc does not yet exist, add a record in our objects
           if(res[item.key[1]] === undefined) {
             paidIDs[item.key[1]] = [];
             internalIDs[item.key[1]] = [];
             freeIDs[item.key[1]] = [];
             knownIDs[item.key[1]] = [];
+            // create an object for this doc if its not a vote
             if(item.key[3] != 'Docs - vote') {
               res[item.key[1]] = {'Document URL': item.key[1], 'Total Views': item.value, 'Unique Views': 0, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': 0, 'Not Helpful': 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
-            } else {
+            } // create a different object for the doc if it's a vote
+            else {
               res[item.key[1]] = {'Document URL': item.key[1], 'Total Views': item.value, 'Unique Views': 0, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': (item.key[4] == 'yes') ? 1: 0, 'Not Helpful': (item.key[4] == 'no') ? 1: 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
             }
-          } if(item.key[3] != 'Docs - vote') {
+          } // count metrics if the doc is not a vote
+          if(item.key[3] != 'Docs - vote') {
               res[item.key[1]]['Total Views'] += item.value;
               res[item.key[1]]['Unique Views'] += 1;
               // Paid user
@@ -137,16 +137,18 @@
                 res[item.key[1]]['Not Helpful'] += 1;
               }
             }
-          }
         });
+        // sort the docs based on total views
         for (var key in res) {
           toSort.push({key:key,total:res[key]['Total Views']});
         }
         var sorted = _.sortBy( toSort, 'total' ).reverse();
+        // add to final object based on the most total views
         for (var i=1; i<sorted.length; i++) {
           final[i] = res[sorted[i-1].key];
           kpis[i] = {};
         }
+        // create kpis using the calculated metrics
         var keys = Object.keys(final);
         for (var i=0; i<keys.length; i++) {
           kpis[keys[i]]['Document'] = final[keys[i]]['Document URL'];
