@@ -98,19 +98,19 @@
                 }
               } // New or old user
               if(item.key[7] === undefined) {
-                res[item.key[1]]['Unknown View'] += 1;
+                res[item.key[1]]['Unknown Views'] += 1;
                 if(knownIDs[item.key[1]].indexOf(item.key[6]) == -1) {
                   knownIDs[item.key[1]].push(item.key[6]);
                   res[item.key[1]]['Unknown Users'] += 1;
                 }
               } else if(item.key[7] == '03/2016' || item.key[7] == '04/2016' || item.key[7] == '05/2016') {
-                res[item.key[1]]['New View'] += 1;
+                res[item.key[1]]['New Views'] += 1;
                 if(knownIDs[item.key[1]].indexOf(item.key[6]) == -1) {
                   knownIDs[item.key[1]].push(item.key[6]);
                   res[item.key[1]]['New Users'] += 1;
                 }
               } else {
-                res[item.key[1]]['Old View'] += 1;
+                res[item.key[1]]['Old Views'] += 1;
                 if(knownIDs[item.key[1]].indexOf(item.key[6]) == -1) {
                   knownIDs[item.key[1]].push(item.key[6]);
                   res[item.key[1]]['Old Users'] += 1;
@@ -156,19 +156,19 @@
                 }
               } // New or old user
               if(item.key[7] === undefined) {
-                res[item.key[1]]['Unknown View'] += 1;
+                res[item.key[1]]['Unknown Views'] += 1;
                 if(knownIDs[item.key[1]].indexOf(item.key[6]) == -1) {
                   knownIDs[item.key[1]].push(item.key[6]);
                   res[item.key[1]]['Unknown Users'] += 1;
                 }
               } else if(item.key[7] == '03/2016' || item.key[7] == '04/2016' || item.key[7] == '05/2016') {
-                res[item.key[1]]['New View'] += 1;
+                res[item.key[1]]['New Views'] += 1;
                 if(knownIDs[item.key[1]].indexOf(item.key[6]) == -1) {
                   knownIDs[item.key[1]].push(item.key[6]);
                   res[item.key[1]]['New Users'] += 1;
                 }
               } else {
-                res[item.key[1]]['Old View'] += 1;
+                res[item.key[1]]['Old Views'] += 1;
                 if(knownIDs[item.key[1]].indexOf(item.key[6]) == -1) {
                   knownIDs[item.key[1]].push(item.key[6]);
                   res[item.key[1]]['Old Users'] += 1;
