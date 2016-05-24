@@ -11,7 +11,8 @@
       return Events({
         from_date: params.from_date,
         to_date: params.to_date,
-        event_selectors: [{event: "Viewed docs"}, {event: "Blog - Post Viewed"}, {event: "Help Center"}, {event: "Landing- Education Videos"}, {event: "Docs - vote"}]
+        event_selectors: [{event: "Viewed docs"}, {event: "Help Center"}, {event: "Landing- Education Videos"}, {event: "Docs - vote"}]
+        // note: removed {event: "Blog - Post Viewed"} as metrics are different. consider adding as real docs to get more concrete metrics straight away
       })
       .filter(function(event) {
       if(event.name == "Blog - Post Viewed") {
@@ -19,7 +20,7 @@
           return event;
         }
       } else if(event.name == "Help Center") {
-        if(event.properties.page !== undefined && event.properties.page != "/help/questions") {
+        if(event.properties.page !== undefined && event.properties.page != "/help/questions" && event.properties.$current_url.toString().indexOf('/help/reference') == -1) {
           return event;
         }
       } else {
@@ -52,7 +53,7 @@
     MP.api.jql(script_one, params).done(function(results) {
       MP.api.jql(script_two, {}).done(function(users) {
         var domains = [];
-        var IDs = {}; var knownIDs = {};
+        var IDs = {}; var paidIDs = {}; var internalIDs = {}; var freeIDs = {}; var knownIDs = {};
         //console.log(results);
         //console.log(users);
         _.each(users, function(item){
@@ -65,7 +66,9 @@
         _.each(results, function(item) {
           // If doc does not yet exist
           if(res[item.key[1]] === undefined) {
-            IDs[item.key[1]] = [];
+            paidIDs[item.key[1]] = [];
+            internalIDs[item.key[1]] = [];
+            freeIDs[item.key[1]] = [];
             knownIDs[item.key[1]] = [];
             if(item.key[3] != 'Docs - vote') {
               res[item.key[1]] = {'Document URL': item.key[1], 'Total Views': item.value, 'Unique Views': 1, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': 0, 'Not Helpful': 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
@@ -74,8 +77,8 @@
                 res[item.key[1]]['Internal Views'] = 0;
                 res[item.key[1]]['Paid Views'] = item.value;
                 res[item.key[1]]['Free Views'] = 0;
-                if(IDs[item.key[1]].indexOf(item.key[6]) == -1) {
-                  IDs[item.key[1]].push(item.key[6]);
+                if(paidIDs[item.key[1]].indexOf(item.key[6]) == -1) {
+                  paidIDs[item.key[1]].push(item.key[6]);
                   res[item.key[1]]['Paid Users'] += 1;
                 }
               } // Mixpanel user
@@ -83,8 +86,8 @@
                 res[item.key[1]]['Internal Views'] = item.value;
                 res[item.key[1]]['Paid Views'] = 0;
                 res[item.key[1]]['Free Views'] = 0;
-                if(IDs[item.key[1]].indexOf(item.key[6]) == -1) {
-                  IDs[item.key[1]].push(item.key[6]);
+                if(internalIDs[item.key[1]].indexOf(item.key[6]) == -1) {
+                  internalIDs[item.key[1]].push(item.key[6]);
                   res[item.key[1]]['Internal Users'] += 1;
                 }
               } // Free user
@@ -92,8 +95,8 @@
                 res[item.key[1]]['Internal Views'] = 0;
                 res[item.key[1]]['Paid Views'] = 0;
                 res[item.key[1]]['Free Views'] = item.value;
-                if(IDs[item.key[1]].indexOf(item.key[6]) == -1) {
-                  IDs[item.key[1]].push(item.key[6]);
+                if(freeIDs[item.key[1]].indexOf(item.key[6]) == -1) {
+                  freeIDs[item.key[1]].push(item.key[6]);
                   res[item.key[1]]['Free Users'] += 1;
                 }
               } // New or old user
@@ -136,22 +139,22 @@
               // Paid user
               if(item.key[2] !== null && domains.indexOf(item.key[2].split("@")[1]) > -1  && item.key[2].split("@")[1] != "mixpanel.com") {
                 res[item.key[1]]['Paid Views'] += item.value;
-                if(IDs[item.key[1]].indexOf(item.key[6]) == -1) {
-                  IDs[item.key[1]].push(item.key[6]);
+                if(paidIDs[item.key[1]].indexOf(item.key[6]) == -1) {
+                  paidIDs[item.key[1]].push(item.key[6]);
                   res[item.key[1]]['Paid Users'] += 1;
                 }
               } // Mixpanel user
               else if (item.key[2] !== null && item.key[2].split("@")[1] == "mixpanel.com") {
                 res[item.key[1]]['Internal Views'] += item.value;
-                if(IDs[item.key[1]].indexOf(item.key[6]) == -1) {
-                  IDs[item.key[1]].push(item.key[6]);
+                if(internalIDs[item.key[1]].indexOf(item.key[6]) == -1) {
+                  internalIDs[item.key[1]].push(item.key[6]);
                   res[item.key[1]]['Internal Users'] += 1;
                 }
               } // Free user
               else {
                 res[item.key[1]]['Free Views'] += item.value;
-                if(IDs[item.key[1]].indexOf(item.key[6]) == -1) {
-                  IDs[item.key[1]].push(item.key[6]);
+                if(freeIDs[item.key[1]].indexOf(item.key[6]) == -1) {
+                  freeIDs[item.key[1]].push(item.key[6]);
                   res[item.key[1]]['Free Users'] += 1;
                 }
               } // New or old user
