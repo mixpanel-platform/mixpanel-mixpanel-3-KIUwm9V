@@ -26,7 +26,7 @@
         return event;
       }
     })
-    .groupByUser(['properties.$current_url', 'properties.Email', 'name', 'properties.helpful', 'properties.$referrer', 'distinct_id', 'properties["Date Joined"]'], mixpanel.reducer.count());
+    .groupByUser(['properties.$current_url', 'properties.Email', 'name', 'properties.helpful', 'properties.$referrer', 'distinct_id', 'properties.Date Joined'], mixpanel.reducer.count());
   }
   </script>
   <script id='query_two'>
@@ -97,7 +97,7 @@
                   res[item.key[1]]['Free Users'] += 1;
                 }
               } // New or old user
-              if(item.key[7] === undefined) {
+              if(item.key[7] === undefined || item.key[7] === null) {
                 res[item.key[1]]['Unknown Views'] += 1;
                 if(knownIDs[item.key[1]].indexOf(item.key[6]) == -1) {
                   knownIDs[item.key[1]].push(item.key[6]);
@@ -155,7 +155,7 @@
                   res[item.key[1]]['Free Users'] += 1;
                 }
               } // New or old user
-              if(item.key[7] === undefined) {
+              if(item.key[7] === undefined || item.key[7] === null) {
                 res[item.key[1]]['Unknown Views'] += 1;
                 if(knownIDs[item.key[1]].indexOf(item.key[6]) == -1) {
                   knownIDs[item.key[1]].push(item.key[6]);
