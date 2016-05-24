@@ -53,7 +53,7 @@
     MP.api.jql(script_one, params).done(function(results) {
       MP.api.jql(script_two, {}).done(function(users) {
         // define local vars
-        var domains = [];vvar IDs = {}; var paidIDs = {}; var internalIDs = {}; var freeIDs = {}; var knownIDs = {}; var res = {}; var toSort = []; var sorted = []; var final = {}; var kpis = {};var total = 0;
+        var domains = []; var IDs = {}; var paidIDs = {}; var internalIDs = {}; var freeIDs = {}; var knownIDs = {}; var res = {}; var toSort = []; var sorted = []; var final = {}; var kpis = {};var total = 0;
         // iterate through the user results to find paid customers
         _.each(users, function(item){
           if(item.key[1] !== undefined) {
