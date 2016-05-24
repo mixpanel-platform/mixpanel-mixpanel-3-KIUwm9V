@@ -27,7 +27,7 @@
         return event;
       }
     })
-    .groupByUser(['properties.article', 'properties.Email', 'name', 'properties.helpful', 'properties.$referrer', 'distinct_id', 'properties.Date Joined'], mixpanel.reducer.count());
+    .groupByUser(['properties.$current_url', 'properties.Email', 'name', 'properties.helpful', 'properties.$referrer', 'distinct_id', 'properties.Date Joined'], mixpanel.reducer.count());
   }
   </script>
   <script id='query_two'>
