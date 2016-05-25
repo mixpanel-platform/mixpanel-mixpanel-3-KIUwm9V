@@ -185,7 +185,7 @@
           kpis[keys[i]]['Views per user'] = parseFloat(final[keys[i]]['Total Views'] / final[keys[i]]['Unique Views']).toFixed(2);
           kpis[keys[i]]['Views per free user'] = parseFloat(final[keys[i]]['Free Views'] / final[keys[i]]['Free Users']).toFixed(2);
           kpis[keys[i]]['Views per paid user'] = parseFloat(final[keys[i]]['Paid Views'] / final[keys[i]]['Paid Users']).toFixed(2);
-          if(((kpis[keys[i]]['Views per paid user'] - kpis[keys[i]]['Views per user']) * Math.sqrt(final[keys[i]]['Paid Views']) / stddev[final[keys[i]]['Document URL']]['Paid']) > 2 && final[keys[i]]['Paid Views'] > 30) {
+          if(((kpis[keys[i]]['Views per paid user'] - kpis[keys[i]]['Views per user']) / stddev[final[keys[i]]['Document URL']]['Paid']) > 2 && final[keys[i]]['Paid Views'] > 30) {
             kpis[keys[i]]['Views per paid user'] = kpis[keys[i]]['Views per paid user'] + '***';
           }
           kpis[keys[i]]['Views per Mixpanel user'] = parseFloat(final[keys[i]]['Internal Views'] / final[keys[i]]['Internal Users']).toFixed(2);
