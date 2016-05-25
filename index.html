@@ -80,13 +80,13 @@
           } // count metrics if the doc is not a vote
           if(item.key[3] != 'Docs - vote') {
               res[item.key[1]]['Total Views'] += item.value;
-              res[item.key[1]]['Unique Views'] += 1;
               // Paid user
               if(item.key[2] !== null && domains.indexOf(item.key[2].split("@")[1]) > -1  && item.key[2].split("@")[1] != "mixpanel.com") {
                 res[item.key[1]]['Paid Views'] += item.value;
                 if(!(item.key[6] in paidIDs[item.key[1]])) {
                   paidIDs[item.key[1]][item.key[6]] = 1;
                   res[item.key[1]]['Paid Users'] += 1;
+                  res[item.key[1]]['Unique Views'] += 1;
                 } else {
                   paidIDs[item.key[1]][item.key[6]] += 1;
                 }
@@ -96,6 +96,7 @@
                 if(!(item.key[6] in internalIDs[item.key[1]])) {
                   internalIDs[item.key[1]][item.key[6]] = 1;
                   res[item.key[1]]['Internal Users'] += 1;
+                  res[item.key[1]]['Unique Views'] += 1;
                 } else {
                   internalIDs[item.key[1]][item.key[6]] += 1;
                 }
@@ -105,6 +106,7 @@
                 if(!(item.key[6] in freeIDs[item.key[1]])) {
                   freeIDs[item.key[1]][item.key[6]] = 1;
                   res[item.key[1]]['Free Users'] += 1;
+                  res[item.key[1]]['Unique Views'] += 1;
                 } else {
                   freeIDs[item.key[1]][item.key[6]] += 1;
                 }
@@ -114,6 +116,7 @@
                 if(!(item.key[6] in unknownIDs[item.key[1]])) {
                   unknownIDs[item.key[1]][item.key[6]] = 1;
                   res[item.key[1]]['Unknown Users'] += 1;
+                  res[item.key[1]]['Unique Views'] += 1;
                 } else {
                   unknownIDs[item.key[1]][item.key[6]] += 1;
                 }
@@ -122,6 +125,7 @@
                 if(!(item.key[6] in newIDs[item.key[1]])) {
                   newIDs[item.key[1]][item.key[6]] = 1;
                   res[item.key[1]]['New Users'] += 1;
+                  res[item.key[1]]['Unique Views'] += 1;
                 } else {
                   newIDs[item.key[1]][item.key[6]] += 1;
                 }
@@ -130,6 +134,7 @@
                 if(!(item.key[6] in oldIDs[item.key[1]])) {
                   oldIDs[item.key[1]][item.key[6]] = 1;
                   res[item.key[1]]['Old Users'] += 1;
+                  res[item.key[1]]['Unique Views'] += 1;
                 } else {
                   oldIDs[item.key[1]][item.key[6]] += 1;
                 }
