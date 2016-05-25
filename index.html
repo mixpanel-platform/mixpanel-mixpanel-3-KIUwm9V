@@ -169,13 +169,13 @@
           var current = final[keys[i]]['Document URL'];
           stddev[current] = {};
           stddev[current]['Paid'] = 0;
-          console.log(paidIDs);
-          console.log(paidIDs[current]);
           var subkeys = Object.keys(paidIDs[current]);
           for (var j=0; j<subkeys.length; j++) {
             stddev[current]['Paid'] += (paidIDs[current][subkeys[j]] - avg) * (paidIDs[current][subkeys[j]] - avg);
           }
+          console.log(stddev[current]['Paid']);
           stddev[current]['Paid'] = Math.sqrt(stddev[current]['Paid'] / final[keys[i]]['Paid Views']);
+          console.log(stddev[current]['Paid']);
         }
         // create kpis using the calculated metrics
         for (var i=0; i<keys.length; i++) {
