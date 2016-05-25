@@ -237,7 +237,10 @@
           }
           kpis[keys[i]]['Percent of total views'] = parseFloat(final[keys[i]]['Total Views'] / total * 100).toFixed(2) + '%';
           kpis[keys[i]]['Helpful ratio'] = parseFloat(final[keys[i]]['Helpful'] / (final[keys[i]]['Helpful'] + final[keys[i]]['Not Helpful'])).toFixed(2);
-          kpis[keys[i]]['Helpful score'] = parseFloat(final[keys[i]]['Helpful'] / (final[keys[i]]['Helpful'] + final[keys[i]]['Not Helpful']) * final[keys[i]]['Total Views']).toFixed(2);
+          if(Math.isNaN(kpis[keys[i]]['Helpful ratio'])) {
+            kpis[keys[i]]['Helpful ratio'] = 0;
+          }
+          kpis[keys[i]]['Helpful score'] = parseFloat(kpis[keys[i]]['Helpful ratio'] * final[keys[i]]['Total Views']).toFixed(2);
         }
         eventTable.MPTable('setData', kpis);
       });
