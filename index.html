@@ -168,34 +168,73 @@
           var avg = parseFloat(final[keys[i]]['Total Views'] / final[keys[i]]['Unique Views']).toFixed(2);
           var current = final[keys[i]]['Document URL'];
           stddev[current] = {};
+          stddev[current]['Free'] = 0;
+          var subkeys = Object.keys(freeIDs[current]);
+          for (var j=0; j<subkeys.length; j++) {
+            stddev[current]['Free'] += (freeIDs[current][subkeys[j]] - avg) * (freeIDs[current][subkeys[j]] - avg);
+          }
+          stddev[current]['Free'] = Math.sqrt(stddev[current]['Free'] / final[keys[i]]['Free Views']);
           stddev[current]['Paid'] = 0;
           var subkeys = Object.keys(paidIDs[current]);
           for (var j=0; j<subkeys.length; j++) {
             stddev[current]['Paid'] += (paidIDs[current][subkeys[j]] - avg) * (paidIDs[current][subkeys[j]] - avg);
           }
-          console.log(current);
-          console.log(stddev[current]['Paid']);
-          console.log(final[keys[i]]['Paid Views']);
           stddev[current]['Paid'] = Math.sqrt(stddev[current]['Paid'] / final[keys[i]]['Paid Views']);
-          console.log(stddev[current]['Paid']);
+          stddev[current]['Internal'] = 0;
+          var subkeys = Object.keys(internalIDs[current]);
+          for (var j=0; j<subkeys.length; j++) {
+            stddev[current]['Internal'] += (internalIDs[current][subkeys[j]] - avg) * (internalIDs[current][subkeys[j]] - avg);
+          }
+          stddev[current]['Internal'] = Math.sqrt(stddev[current]['Internal'] / final[keys[i]]['Internal Views']);
+          stddev[current]['Unknown'] = 0;
+          var subkeys = Object.keys(unknownIDs[current]);
+          for (var j=0; j<subkeys.length; j++) {
+            stddev[current]['Unknown'] += (unknownIDs[current][subkeys[j]] - avg) * (unknownIDs[current][subkeys[j]] - avg);
+          }
+          stddev[current]['Unknown'] = Math.sqrt(stddev[current]['Unknown'] / final[keys[i]]['Unknown Views']);
+          stddev[current]['New'] = 0;
+          var subkeys = Object.keys(newIDs[current]);
+          for (var j=0; j<subkeys.length; j++) {
+            stddev[current]['New'] += (newIDs[current][subkeys[j]] - avg) * (newIDs[current][subkeys[j]] - avg);
+          }
+          stddev[current]['New'] = Math.sqrt(stddev[current]['New'] / final[keys[i]]['New Views']);
+          stddev[current]['Old'] = 0;
+          var subkeys = Object.keys(oldIDs[current]);
+          for (var j=0; j<subkeys.length; j++) {
+            stddev[current]['Old'] += (oldIDs[current][subkeys[j]] - avg) * (oldIDs[current][subkeys[j]] - avg);
+          }
+          stddev[current]['Old'] = Math.sqrt(stddev[current]['Old'] / final[keys[i]]['Old Views']);
         }
         // create kpis using the calculated metrics
         for (var i=0; i<keys.length; i++) {
           kpis[keys[i]]['Document'] = final[keys[i]]['Document URL'];
           kpis[keys[i]]['Views per user'] = parseFloat(final[keys[i]]['Total Views'] / final[keys[i]]['Unique Views']).toFixed(2);
           kpis[keys[i]]['Views per free user'] = parseFloat(final[keys[i]]['Free Views'] / final[keys[i]]['Free Users']).toFixed(2);
+          if(Math.abs(((kpis[keys[i]]['Views per free user'] - kpis[keys[i]]['Views per user']) / stddev[final[keys[i]]['Document URL']]['Free'])) > 1.96 && final[keys[i]]['Free Views'] > 30) {
+            kpis[keys[i]]['Views per free user'] = kpis[keys[i]]['Views per free user'] + '***';
+          }
           kpis[keys[i]]['Views per paid user'] = parseFloat(final[keys[i]]['Paid Views'] / final[keys[i]]['Paid Users']).toFixed(2);
-          if(((kpis[keys[i]]['Views per paid user'] - kpis[keys[i]]['Views per user']) / stddev[final[keys[i]]['Document URL']]['Paid']) > 2 && final[keys[i]]['Paid Views'] > 30) {
+          if(Math.abs(((kpis[keys[i]]['Views per paid user'] - kpis[keys[i]]['Views per user']) / stddev[final[keys[i]]['Document URL']]['Paid'])) > 1.96 && final[keys[i]]['Paid Views'] > 30) {
             kpis[keys[i]]['Views per paid user'] = kpis[keys[i]]['Views per paid user'] + '***';
           }
           kpis[keys[i]]['Views per Mixpanel user'] = parseFloat(final[keys[i]]['Internal Views'] / final[keys[i]]['Internal Users']).toFixed(2);
+          if(Math.abs(((kpis[keys[i]]['Views per Mixpanel user'] - kpis[keys[i]]['Views per user']) / stddev[final[keys[i]]['Document URL']]['Internal'])) > 1.96 && final[keys[i]]['Internal Views'] > 30) {
+            kpis[keys[i]]['Views per Mixpanel user'] = kpis[keys[i]]['Views per Mixpanel user'] + '***';
+          }
           kpis[keys[i]]['Views per unregistered user'] = parseFloat(final[keys[i]]['Unknown Views'] / final[keys[i]]['Unknown Users']).toFixed(2);
+          if(Math.abs(((kpis[keys[i]]['Views per unregistered user'] - kpis[keys[i]]['Views per user']) / stddev[final[keys[i]]['Document URL']]['Unknown'])) > 1.96 && final[keys[i]]['Unknown Views'] > 30) {
+            kpis[keys[i]]['Views per unregistered user'] = kpis[keys[i]]['Views per unregistered user'] + '***';
+          }
           kpis[keys[i]]['Views per new user'] = parseFloat(final[keys[i]]['New Views'] / final[keys[i]]['New Users']).toFixed(2);
+          if(Math.abs(((kpis[keys[i]]['Views per new user'] - kpis[keys[i]]['Views per user']) / stddev[final[keys[i]]['Document URL']]['New'])) > 1.96 && final[keys[i]]['New Views'] > 30) {
+            kpis[keys[i]]['Views per new user'] = kpis[keys[i]]['Views per new user'] + '***';
+          }
           kpis[keys[i]]['Views per old user'] = parseFloat(final[keys[i]]['Old Views'] / final[keys[i]]['Old Users']).toFixed(2);
+          if(Math.abs(((kpis[keys[i]]['Views per old user'] - kpis[keys[i]]['Views per user']) / stddev[final[keys[i]]['Document URL']]['Old'])) > 1.96 && final[keys[i]]['Old Views'] > 30) {
+            kpis[keys[i]]['Views per old user'] = kpis[keys[i]]['Views per old user'] + '***';
+          }
           kpis[keys[i]]['Percent of total views'] = parseFloat(final[keys[i]]['Total Views'] / total * 100).toFixed(2) + '%';
         }
-        
-        
         eventTable.MPTable('setData', kpis);
       });
     });
