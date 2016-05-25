@@ -116,7 +116,6 @@
                 if(!(item.key[6] in unknownIDs[item.key[1]])) {
                   unknownIDs[item.key[1]][item.key[6]] = 1;
                   res[item.key[1]]['Unknown Users'] += 1;
-                  res[item.key[1]]['Unique Views'] += 1;
                 } else {
                   unknownIDs[item.key[1]][item.key[6]] += 1;
                 }
@@ -125,7 +124,6 @@
                 if(!(item.key[6] in newIDs[item.key[1]])) {
                   newIDs[item.key[1]][item.key[6]] = 1;
                   res[item.key[1]]['New Users'] += 1;
-                  res[item.key[1]]['Unique Views'] += 1;
                 } else {
                   newIDs[item.key[1]][item.key[6]] += 1;
                 }
@@ -134,7 +132,6 @@
                 if(!(item.key[6] in oldIDs[item.key[1]])) {
                   oldIDs[item.key[1]][item.key[6]] = 1;
                   res[item.key[1]]['Old Users'] += 1;
-                  res[item.key[1]]['Unique Views'] += 1;
                 } else {
                   oldIDs[item.key[1]][item.key[6]] += 1;
                 }
