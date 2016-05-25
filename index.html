@@ -163,6 +163,7 @@
           kpis[i] = {};
         }
         // calculate statistical significance
+        var keys = Object.keys(final);
         for (var i=0; i<keys.length; i++) {
           var avg = parseFloat(final[keys[i]]['Total Views'] / final[keys[i]]['Unique Views']).toFixed(2);
           stddev['Paid'] = 0;
@@ -173,7 +174,6 @@
           stddev['Paid'] = Math.sqrt(stddev['Paid'] / final[keys[i]]['Paid Views']);
         }
         // create kpis using the calculated metrics
-        var keys = Object.keys(final);
         for (var i=0; i<keys.length; i++) {
           kpis[keys[i]]['Document'] = final[keys[i]]['Document URL'];
           kpis[keys[i]]['Views per user'] = parseFloat(final[keys[i]]['Total Views'] / final[keys[i]]['Unique Views']).toFixed(2);
