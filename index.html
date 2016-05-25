@@ -175,6 +175,7 @@
           }
           console.log(current);
           console.log(stddev[current]['Paid']);
+          console.log(final[keys[i]]['Paid Views']);
           stddev[current]['Paid'] = Math.sqrt(stddev[current]['Paid'] / final[keys[i]]['Paid Views']);
           console.log(stddev[current]['Paid']);
         }
