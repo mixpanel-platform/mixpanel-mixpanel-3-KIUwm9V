@@ -173,6 +173,7 @@
           for (var j=0; j<subkeys.length; j++) {
             stddev[current]['Paid'] += (paidIDs[current][subkeys[j]] - avg) * (paidIDs[current][subkeys[j]] - avg);
           }
+          console.log(current);
           console.log(stddev[current]['Paid']);
           stddev[current]['Paid'] = Math.sqrt(stddev[current]['Paid'] / final[keys[i]]['Paid Views']);
           console.log(stddev[current]['Paid']);
