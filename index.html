@@ -166,16 +166,16 @@
         var keys = Object.keys(final);
         for (var i=0; i<keys.length; i++) {
           var avg = parseFloat(final[keys[i]]['Total Views'] / final[keys[i]]['Unique Views']).toFixed(2);
-          stddev['Paid'] = 0;
+          var current = final[keys[i]]['Document URL'];
+          stddev[current] = {};
+          stddev[current]['Paid'] = 0;
           console.log(paidIDs);
-          console.log(keys[i]);
-          console.log(final[keys[i]]);
-          console.log(paidIDs[final[keys[i]]]);
-          var subkeys = (Object.keys(paidIDs[keys[i]]) !== undefined && Object.keys(paidIDs[keys[i]]) !== null) ? Object.keys(paidIDs[keys[i]]) : [];
+          console.log(paidIDs[current]);
+          var subkeys = Object.keys(paidIDs[current]);
           for (var j=0; j<subkeys.length; j++) {
-            stddev['Paid'] += (paidIDs[keys[i]][subkeys[j]] - avg) * (paidIDs[keys[i]][subkeys[j]] - avg);
+            stddev[current]['Paid'] += (paidIDs[current][subkeys[j]] - avg) * (paidIDs[current][subkeys[j]] - avg);
           }
-          stddev['Paid'] = Math.sqrt(stddev['Paid'] / final[keys[i]]['Paid Views']);
+          stddev[current]['Paid'] = Math.sqrt(stddev[current]['Paid'] / final[keys[i]]['Paid Views']);
         }
         // create kpis using the calculated metrics
         for (var i=0; i<keys.length; i++) {
@@ -183,7 +183,7 @@
           kpis[keys[i]]['Views per user'] = parseFloat(final[keys[i]]['Total Views'] / final[keys[i]]['Unique Views']).toFixed(2);
           kpis[keys[i]]['Views per free user'] = parseFloat(final[keys[i]]['Free Views'] / final[keys[i]]['Free Users']).toFixed(2);
           kpis[keys[i]]['Views per paid user'] = parseFloat(final[keys[i]]['Paid Views'] / final[keys[i]]['Paid Users']).toFixed(2);
-          if(((kpis[keys[i]]['Views per paid user'] - kpis[keys[i]]['Views per user']) * Math.sqrt(final[keys[i]]['Paid Views']) / stddev['Paid']) > 2) {
+          if(((kpis[keys[i]]['Views per paid user'] - kpis[keys[i]]['Views per user']) * Math.sqrt(final[keys[i]]['Paid Views']) / stddev[final[keys[i]]['Document URL']]['Paid']) > 2) {
             kpis[keys[i]]['Views per paid user'] = kpis[keys[i]]['Views per paid user'] + '***';
           }
           kpis[keys[i]]['Views per Mixpanel user'] = parseFloat(final[keys[i]]['Internal Views'] / final[keys[i]]['Internal Users']).toFixed(2);
