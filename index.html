@@ -73,7 +73,7 @@
           return event;
         }
       } else if(event.name == "Help Center") {
-        if(event.properties.page !== undefined && event.properties.$current_url !== undefined && event.properties.page != "/help/questions" && event.properties.$current_url.toString().indexOf('/help/reference') == -1 && event.properties.$current_url.toString().indexOf('/drafts/') == -1 && event.properties.$current_url.toString().indexOf('/search') == -1 && event.properties.$current_url != "https://mixpanel.com/help/" && event.properties.$current_url != "https://mixpanel.com/help/questions/") {
+        if(event.properties.$current_url !== undefined && (event.properties.$current_url.indexOf('/help/questions/articles/') > -1 || event.properties.$current_url.indexOf('/docs/') > -1) && event.properties.$current_url != "https://mixpanel.com/help/" && event.properties.$current_url != "https://mixpanel.com/help/questions/") {
           return event;
         }
       } else {
