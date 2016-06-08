@@ -12,6 +12,11 @@
         margin-bottom: 15px;
         display: block;
         overflow: scroll;
+        width: 900px;
+        height: 1000px;
+      }
+      #resultsTable td {
+        width: 100px;
       }
       #resultsTable thead {
         cursor: pointer;
@@ -21,6 +26,7 @@
         font-weight: bold;
         padding: 12px 30px;
         padding-left: 42px;
+        border: 1px solid black;
       }
       #resultsTable thead tr th span { 
         padding-right: 20px;
@@ -36,12 +42,16 @@
       #resultsTable thead tr th.headerSortDown span {
         background-image: url('http://www.clipartbest.com/cliparts/jix/EBz/jixEBzx9T.png');
       }
+      #resultsTable thead tr td {
+        border: 1px solid black;
+      }
       #resultsTable tbody tr { 
         color: #555;
       }
       #resultsTable tbody tr td {
         text-align: left;
         padding: 15px 10px;
+        border: 1px solid black;
       }
       #resultsTable tbody tr td.lalign {
         text-align: left;
@@ -315,19 +325,31 @@
   
   function chartIt(data) {
     _.each(data, function(item) {
+      var keys = Object.keys(item);
+      var outliers = {};
+      for(i=0; i<keys.length; i++) {
+        if(item[keys[i]].indexOf('***') == -1) {
+          outliers[keys[i]] = '<td>';
+        } else {
+          outliers[keys[i]] = '<td bgcolor="#FFFFFF">';
+        }
+        if(isNaN(item[keys[i]])) {
+          item[keys[i]] = 0;
+        }
+      }
       $('table#resultsTable').append(
         '<tr>' +
-        '<td>' + item['Document'] + '</td>' +
-        '<td>' + item['Helpful ratio'] + '</td>' +
-        '<td>' + item['Helpful score'] + '</td>' +
-        '<td>' + item['Percent of total views'] + '</td>' +
-        '<td>' + item['Views per Mixpanel user'] + '</td>' +
-        '<td>' + item['Views per free user'] + '</td>' +
-        '<td>' + item['Views per new user'] + '</td>' +
-        '<td>' + item['Views per old user'] + '</td>' +
-        '<td>' + item['Views per paid user'] + '</td>' +
-        '<td>' + item['Views per unregistered user'] + '</td>' +
-        '<td>' + item['Views per user'] + '</td>' +
+        outliers['Document'] + item['Document'] + '</td>' +
+        outliers['Helpful ratio'] + item['Helpful ratio'] + '</td>' +
+        outliers['Helpful score'] + item['Helpful score'] + '</td>' +
+        outliers['Percent of total views'] + item['Percent of total views'] + '</td>' +
+        outliers['Views per Mixpanel user'] + item['Views per Mixpanel user'] + '</td>' +
+        outliers['Views per free user'] + item['Views per free user'] + '</td>' +
+        outliers['Views per new user'] + item['Views per new user'] + '</td>' +
+        outliers['Views per old user'] + item['Views per old user'] + '</td>' +
+        outliers['Views per paid user'] + item['Views per paid user'] + '</td>' +
+        outliers['Views per unregistered user'] + item['Views per unregistered user'] + '</td>' +
+        outliers['Views per user'] + item['Views per user'] + '</td>' +
         '</tr>'
       );
     });
