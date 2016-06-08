@@ -4,6 +4,49 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/css/reset.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.css">
     <script src="https://cdn.mxpnl.com/libs/mixpanel-platform/build/mixpanel-platform.v0.latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/tablesorter/2.17.4/js/jquery.tablesorter.min.js"></script>
+    <style>
+      #resultsTable {
+        margin: 0 auto;
+        font-size: 1.2em;
+        margin-bottom: 15px;
+        display: block;
+        overflow: scroll;
+      }
+      #resultsTable thead {
+        cursor: pointer;
+        background: #c9dff0;
+      }
+      #resultsTable thead tr th { 
+        font-weight: bold;
+        padding: 12px 30px;
+        padding-left: 42px;
+      }
+      #resultsTable thead tr th span { 
+        padding-right: 20px;
+        background-repeat: no-repeat;
+        background-position: 100% 100%;
+      }
+      #resultsTable thead tr th.headerSortUp, #resultsTable thead tr th.headerSortDown {
+        background: #acc8dd;
+      }
+      #resultsTable thead tr th.headerSortUp span {
+        background-image: url('up-arrow.png');
+      }
+      #resultsTable thead tr th.headerSortDown span {
+        background-image: url('down-arrow.png');
+      }
+      #resultsTable tbody tr { 
+        color: #555;
+      }
+      #resultsTable tbody tr td {
+        text-align: center;
+        padding: 15px 10px;
+      }
+      #resultsTable tbody tr td.lalign {
+        text-align: left;
+      }
+    </style>
   </head>
   <body class="mixpanel-platform-body">
   <script id='query_one'>
@@ -48,38 +91,22 @@
   var eventTable = $('#table').MPTable({showPercentages: false, firstColHeader: 'Frequency'});
   function runQuery() {
     $('table#resultsTable').append(
-            '<thead>' +
-            '<tr>' +
-            '<td>' + "Document URL" + '</td>' +
-            '<td>' + "Helpful Ratio" + '</td>' +
-            '<td>' + "Helpful Score" + '</td>' +
-            '<td>' + "Percent of total views" + '</td>' +
-            '<td>' + "Views per Mixpanel user" + '</td>' +
-            '<td>' + "Views per free user" + '</td>' +
-            '<td>' + "Views per new user" + '</td>' +
-            '<td>' + "Views per old user" + '</td>' +
-            '<td>' + "Views per paid user" + '</td>' +
-            '<td>' + "Views per unregistered user" + '</td>' +
-            '<td>' + "Views per user" + '</td>' +
-            '</tr>' +
-            '</thead>'
-          );
-      $('table#resultsTable').append(
-            '<tbody>' +
-            '<tr>' +
-            '<td>' + "---" + '</td>' +
-            '<td>' + "---" + '</td>' +
-            '<td>' + "---" + '</td>' +
-            '<td>' + "---" + '</td>' +
-            '<td>' + "---" + '</td>' +
-            '<td>' + "---" + '</td>' +
-            '<td>' + "---" + '</td>' +
-            '<td>' + "---" + '</td>' +
-            '<td>' + "---" + '</td>' +
-            '<td>' + "---" + '</td>' +
-            '<td>' + "---" + '</td>' +
-            '</tr>'
-          );
+      '<thead>' +
+      '<tr>' +
+      '<td>' + "Document URL" + '</td>' +
+      '<td>' + "Helpful Ratio" + '</td>' +
+      '<td>' + "Helpful Score" + '</td>' +
+      '<td>' + "Percent of total views" + '</td>' +
+      '<td>' + "Views per Mixpanel user" + '</td>' +
+      '<td>' + "Views per free user" + '</td>' +
+      '<td>' + "Views per new user" + '</td>' +
+      '<td>' + "Views per old user" + '</td>' +
+      '<td>' + "Views per paid user" + '</td>' +
+      '<td>' + "Views per unregistered user" + '</td>' +
+      '<td>' + "Views per user" + '</td>' +
+      '</tr>' +
+      '</thead>'
+    );
     var params = {
       'from_date': dateSelect.MPDatepicker('value').from.toISOString().slice(0, -14),
       'to_date': dateSelect.MPDatepicker('value').to.toISOString().slice(0, -14),
@@ -287,28 +314,28 @@
   }
   
   function chartIt(data) {
-        _.each(data, function(item) {
-          console.log(item);
-          $('table#resultsTable').append(
-            '<tr>' +
-            '<td>' + item['Document'] + '</td>' +
-            '<td>' + item['Helpful ratio'] + '</td>' +
-            '<td>' + item['Helpful score'] + '</td>' +
-            '<td>' + item['Percent of total views'] + '</td>' +
-            '<td>' + item['Views per Mixpanel user'] + '</td>' +
-            '<td>' + item['Views per free user'] + '</td>' +
-            '<td>' + item['Views per new user'] + '</td>' +
-            '<td>' + item['Views per old user'] + '</td>' +
-            '<td>' + item['Views per paid user'] + '</td>' +
-            '<td>' + item['Views per unregistered user'] + '</td>' +
-            '<td>' + item['Views per user'] + '</td>' +
-            '</tr>'
-          );
-        })
-      $('table#resultsTable').append('</tbody>');
+    _.each(data, function(item) {
+      $('table#resultsTable').append(
+        '<tr>' +
+        '<td>' + item['Document'] + '</td>' +
+        '<td>' + item['Helpful ratio'] + '</td>' +
+        '<td>' + item['Helpful score'] + '</td>' +
+        '<td>' + item['Percent of total views'] + '</td>' +
+        '<td>' + item['Views per Mixpanel user'] + '</td>' +
+        '<td>' + item['Views per free user'] + '</td>' +
+        '<td>' + item['Views per new user'] + '</td>' +
+        '<td>' + item['Views per old user'] + '</td>' +
+        '<td>' + item['Views per paid user'] + '</td>' +
+        '<td>' + item['Views per unregistered user'] + '</td>' +
+        '<td>' + item['Views per user'] + '</td>' +
+        '</tr>'
+      );
+    });
+    $('table#resultsTable').append('</tbody>');
   }
   
   dateSelect.on('change', function() {runQuery();});
+  $('#resultsTable').on('click', function() {$('#resultsTable').tablesorter();}); 
   runQuery();
   </script>
   </body>
