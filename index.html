@@ -73,7 +73,7 @@
           return event;
         }
       } else if(event.name == "Help Center") {
-        if(event.properties.page !== undefined && event.properties.page != "/help/questions" && event.properties.$current_url.toString().indexOf('/help/reference') == -1 && event.properties.$current_url != "https://mixpanel.com/help/" && event.properties.$current_url != "https://mixpanel.com/help/questions/") {
+        if(event.properties.page !== undefined && event.properties.$current_url !== undefined && event.properties.page != "/help/questions" && event.properties.$current_url.toString().indexOf('/help/reference') == -1 && event.properties.$current_url.toString().indexOf('/drafts/') == -1 && event.properties.$current_url.toString().indexOf('/search') == -1 && event.properties.$current_url != "https://mixpanel.com/help/" && event.properties.$current_url != "https://mixpanel.com/help/questions/") {
           return event;
         }
       } else {
@@ -143,10 +143,10 @@
             oldIDs[item.key[1]] = {};
             // create an object for this doc if its not a vote
             if(item.key[3] != 'Docs - vote') {
-              res[item.key[1]] = {'Document URL': item.key[1], 'Total Views': item.value, 'Unique Views': 0, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': 0, 'Not Helpful': 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
+              res[item.key[1]] = {'Document URL': item.key[1], 'Total Views': 0, 'Unique Views': 0, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': 0, 'Not Helpful': 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
             } // create a different object for the doc if it's a vote
             else {
-              res[item.key[1]] = {'Document URL': item.key[1], 'Total Views': item.value, 'Unique Views': 0, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': (item.key[4] == 'yes') ? 1: 0, 'Not Helpful': (item.key[4] == 'no') ? 1: 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
+              res[item.key[1]] = {'Document URL': item.key[1], 'Total Views': 0, 'Unique Views': 0, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': (item.key[4] == 'yes') ? 1: 0, 'Not Helpful': (item.key[4] == 'no') ? 1: 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
             }
           } // count metrics if the doc is not a vote
           if(item.key[3] != 'Docs - vote') {
@@ -308,13 +308,13 @@
           }
           kpis[keys[i]]['Percent of total views'] = parseFloat(final[keys[i]]['Total Views'] / total * 100).toFixed(2) + '%';
           kpis[keys[i]]['Helpful ratio'] = parseFloat(final[keys[i]]['Helpful'] / (final[keys[i]]['Helpful'] + final[keys[i]]['Not Helpful'])).toFixed(2);
-          if(isNaN(kpis[keys[i]]['Helpful ratio'])) {
+          /*if(isNaN(kpis[keys[i]]['Helpful ratio'])) {
             kpis[keys[i]]['Helpful ratio'] = 'N/A';
-          }
+          }*/
           kpis[keys[i]]['Helpful score'] = parseFloat(kpis[keys[i]]['Helpful ratio'] * final[keys[i]]['Total Views']).toFixed(2);
-          if(isNaN(kpis[keys[i]]['Helpful score'])) {
+          /*if(isNaN(kpis[keys[i]]['Helpful score'])) {
             kpis[keys[i]]['Helpful score'] = 'N/A';
-          }
+          }*/
         }
         console.log(kpis);
         //eventTable.MPTable('setData', kpis);
@@ -332,8 +332,9 @@
           outliers[keys[i]] = '<td>';
         } else {
           outliers[keys[i]] = '<td bgcolor="#FFFFFF">';
+          item[keys[i]] = item[keys[i]].slice(0,-3);
         }
-        if(isNaN(item[keys[i]])) {
+        if(isNaN(item[keys[i]]) && keys[i] !== 'Document') {
           item[keys[i]] = 0;
         }
       }
@@ -356,7 +357,7 @@
     $('table#resultsTable').append('</tbody>');
   }
   
-  dateSelect.on('change', function() {runQuery();});
+  dateSelect.on('change', function() {$('#resultsTable').empty(); runQuery();});
   $('#resultsTable').on('click', function() {$('#resultsTable').tablesorter();}); 
   runQuery();
   </script>
