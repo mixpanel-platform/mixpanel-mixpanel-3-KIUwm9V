@@ -72,7 +72,7 @@
         if(event.properties.title !== undefined && event.properties.title.indexOf("Community Tip") > -1) {
           return event;
         }
-      } else if(event.name == "Help Center") {
+      } else if(event.name == "Help Center" || event.name == "Viewed docs") {
         if(event.properties.$current_url !== undefined && (event.properties.$current_url.indexOf('/help/questions/articles/') > -1 || event.properties.$current_url.indexOf('/docs/') > -1) && event.properties.$current_url != "https://mixpanel.com/help/" && event.properties.$current_url != "https://mixpanel.com/help/questions/") {
           return event;
         }
@@ -306,7 +306,7 @@
           if(Math.abs(((kpis[keys[i]]['Views per old user'] - kpis[keys[i]]['Views per user']) / stddev[final[keys[i]]['Document URL']]['Old'])) > 1.96 && final[keys[i]]['Old Views'] > 30) {
             kpis[keys[i]]['Views per old user'] = kpis[keys[i]]['Views per old user'] + '***';
           }
-          kpis[keys[i]]['Percent of total views'] = parseFloat(final[keys[i]]['Total Views'] / total * 100).toFixed(2) + '%';
+          kpis[keys[i]]['Percent of total views'] = parseFloat(final[keys[i]]['Total Views'] / total * 100).toFixed(2);
           kpis[keys[i]]['Helpful ratio'] = parseFloat(final[keys[i]]['Helpful'] / (final[keys[i]]['Helpful'] + final[keys[i]]['Not Helpful'])).toFixed(2);
           /*if(isNaN(kpis[keys[i]]['Helpful ratio'])) {
             kpis[keys[i]]['Helpful ratio'] = 'N/A';
