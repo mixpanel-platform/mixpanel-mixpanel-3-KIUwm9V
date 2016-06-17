@@ -115,13 +115,15 @@
     MP.api.jql(script_one, params).done(function(results) {
       MP.api.jql(script_two, {}).done(function(users) {
         // define local vars
-        var domains = []; var IDs = {}; var paidIDs = {}; var internalIDs = {}; var freeIDs = {}; var newIDs = {}; var oldIDs = {}; var unknownIDs ={}; var res = {}; var toSort = []; var sorted = []; var final = {}; var kpis = {};var total = 0; var stddev = {};
+        var domains = []; var IDs = {}; var paidIDs = {}; var internalIDs = {}; var freeIDs = {}; var newIDs = {}; var oldIDs = {}; var unknownIDs ={}; var res = {}; var toSort = []; var sorted = []; var final = {}; var kpis = {};var total = 0; var stddev = {}; var all = {};
         // iterate through the user results to find paid customers
         _.each(users, function(item){
           if(item.key[1] !== undefined) {
             domains.push(item.key[1].split("@")[1]);
           }
         });
+        // create object for overall metrics
+        all = {'Document URL': 0, 'Total Views': 0, 'Unique Views': 0, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': 0, 'Not Helpful': 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
         // iterate through event results to count doc metrics
         _.each(results, function(item) {
           // if doc does not yet exist, add a record in our objects
@@ -181,7 +183,7 @@
                 } else {
                   unknownIDs[item.key[1]][item.key[6]] += 1;
                 }
-              } else if(item.key[7] == '03/2016' || item.key[7] == '04/2016' || item.key[7] == '05/2016') {
+              } else if(item.key[7] == '04/2016' || item.key[7] == '05/2016' || item.key[7] == '06/2016') {
                 res[item.key[1]]['New Views'] += 1;
                 if(!(item.key[6] in newIDs[item.key[1]])) {
                   newIDs[item.key[1]][item.key[6]] = 1;
@@ -206,7 +208,7 @@
                   res[item.key[1]]['Via Search'] += 1;
                 }
               }
-              total += 1;
+              total += item.value;
             } // If doc is a vote, add to the count only
             else {
               if(item.key[4] == 'yes') { 
@@ -230,6 +232,8 @@
         var keys = Object.keys(final);
         for (var i=0; i<keys.length; i++) {
           var avg = parseFloat(final[keys[i]]['Total Views'] / final[keys[i]]['Unique Views']).toFixed(2);
+          all['Total Views'] += final[keys[i]]['Total Views'];
+          all['Unique Views'] += final[keys[i]]['Unique Views'];
           var current = final[keys[i]]['Document URL'];
           stddev[current] = {};
           stddev[current]['Free'] = 0;
@@ -238,38 +242,51 @@
             stddev[current]['Free'] += (freeIDs[current][subkeys[j]] - avg) * (freeIDs[current][subkeys[j]] - avg);
           }
           stddev[current]['Free'] = Math.sqrt(stddev[current]['Free'] / final[keys[i]]['Free Views']);
+          all['Free Views'] += final[keys[i]]['Free Views'];
+          all['Free Users'] += final[keys[i]]['Free Users'];
           stddev[current]['Paid'] = 0;
           var subkeys = Object.keys(paidIDs[current]);
           for (var j=0; j<subkeys.length; j++) {
             stddev[current]['Paid'] += (paidIDs[current][subkeys[j]] - avg) * (paidIDs[current][subkeys[j]] - avg);
           }
           stddev[current]['Paid'] = Math.sqrt(stddev[current]['Paid'] / final[keys[i]]['Paid Views']);
+          all['Paid Views'] += final[keys[i]]['Paid Views'];
+          all['Paid Users'] += final[keys[i]]['Paid Users'];
           stddev[current]['Internal'] = 0;
           var subkeys = Object.keys(internalIDs[current]);
           for (var j=0; j<subkeys.length; j++) {
             stddev[current]['Internal'] += (internalIDs[current][subkeys[j]] - avg) * (internalIDs[current][subkeys[j]] - avg);
           }
           stddev[current]['Internal'] = Math.sqrt(stddev[current]['Internal'] / final[keys[i]]['Internal Views']);
+          all['Internal Views'] += final[keys[i]]['Internal Views'];
+          all['Internal Users'] += final[keys[i]]['Internal Users'];
           stddev[current]['Unknown'] = 0;
           var subkeys = Object.keys(unknownIDs[current]);
           for (var j=0; j<subkeys.length; j++) {
             stddev[current]['Unknown'] += (unknownIDs[current][subkeys[j]] - avg) * (unknownIDs[current][subkeys[j]] - avg);
           }
           stddev[current]['Unknown'] = Math.sqrt(stddev[current]['Unknown'] / final[keys[i]]['Unknown Views']);
+          all['Unknown Views'] += final[keys[i]]['Unknown Views'];
+          all['Unknown Users'] += final[keys[i]]['Unknown Users'];
           stddev[current]['New'] = 0;
           var subkeys = Object.keys(newIDs[current]);
           for (var j=0; j<subkeys.length; j++) {
             stddev[current]['New'] += (newIDs[current][subkeys[j]] - avg) * (newIDs[current][subkeys[j]] - avg);
           }
           stddev[current]['New'] = Math.sqrt(stddev[current]['New'] / final[keys[i]]['New Views']);
+          all['New Views'] += final[keys[i]]['New Views'];
+          all['New Users'] += final[keys[i]]['New Users'];
           stddev[current]['Old'] = 0;
           var subkeys = Object.keys(oldIDs[current]);
           for (var j=0; j<subkeys.length; j++) {
             stddev[current]['Old'] += (oldIDs[current][subkeys[j]] - avg) * (oldIDs[current][subkeys[j]] - avg);
           }
           stddev[current]['Old'] = Math.sqrt(stddev[current]['Old'] / final[keys[i]]['Old Views']);
+          all['Old Views'] += final[keys[i]]['Old Views'];
+          all['Old Users'] += final[keys[i]]['Old Users'];
         }
         // create kpis using the calculated metrics
+        kpis[0] = {'Document': 'All', 'Helpful ratio': 'N/A', 'Helpful score': 'N/A', 'Percent of total views': parseFloat(all['Total Views'] / total * 100).toFixed(2), 'Views per Mixpanel user': parseFloat(all['Internal Views'] / all['Internal Users']).toFixed(2), 'Views per free user': parseFloat(all['Free Views'] / all['Free Users']).toFixed(2), 'Views per new user': parseFloat(all['New Views'] / all['New Users']).toFixed(2), 'Views per old user': parseFloat(all['Old Views'] / all['Old Users']).toFixed(2), 'Views per paid user': parseFloat(all['Paid Views'] / all['Paid Users']).toFixed(2), 'Views per unregistered user': parseFloat(all['Unknown Views'] / all['Unknown Users']).toFixed(2), 'Views per user': parseFloat(all['Total Views'] / all['Unique Views'] * 100).toFixed(2)};
         for (var i=0; i<keys.length; i++) {
           kpis[keys[i]]['Document'] = final[keys[i]]['Document URL'];
           kpis[keys[i]]['Views per user'] = parseFloat(final[keys[i]]['Total Views'] / final[keys[i]]['Unique Views']).toFixed(2);
