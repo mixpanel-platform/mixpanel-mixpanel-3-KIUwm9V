@@ -228,62 +228,70 @@
           final[i] = res[sorted[i-1].key];
           kpis[i] = {};
         }
-        // calculate statistical significance
+        // calculate docs totals
         var keys = Object.keys(final);
         for (var i=0; i<keys.length; i++) {
-          var avg = parseFloat(final[keys[i]]['Total Views'] / final[keys[i]]['Unique Views']).toFixed(2);
           all['Total Views'] += final[keys[i]]['Total Views'];
           all['Unique Views'] += final[keys[i]]['Unique Views'];
+          all['Free Views'] += final[keys[i]]['Free Views'];
+          all['Free Users'] += final[keys[i]]['Free Users'];
+          all['Paid Views'] += final[keys[i]]['Paid Views'];
+          all['Paid Users'] += final[keys[i]]['Paid Users'];
+          all['Internal Views'] += final[keys[i]]['Internal Views'];
+          all['Internal Users'] += final[keys[i]]['Internal Users'];
+          all['Unknown Views'] += final[keys[i]]['Unknown Views'];
+          all['Unknown Users'] += final[keys[i]]['Unknown Users'];
+          all['New Views'] += final[keys[i]]['New Views'];
+          all['New Users'] += final[keys[i]]['New Users'];
+          all['Old Views'] += final[keys[i]]['Old Views'];
+          all['Old Users'] += final[keys[i]]['Old Users'];
+        }
+        // calculate statistical significance
+        for (var i=0; i<keys.length; i++) {
           var current = final[keys[i]]['Document URL'];
           stddev[current] = {};
           stddev[current]['Free'] = 0;
+          var avg = parseFloat(all['Free Views'] / all['Free Users']).toFixed(2);
           var subkeys = Object.keys(freeIDs[current]);
           for (var j=0; j<subkeys.length; j++) {
             stddev[current]['Free'] += (freeIDs[current][subkeys[j]] - avg) * (freeIDs[current][subkeys[j]] - avg);
           }
           stddev[current]['Free'] = Math.sqrt(stddev[current]['Free'] / final[keys[i]]['Free Views']);
-          all['Free Views'] += final[keys[i]]['Free Views'];
-          all['Free Users'] += final[keys[i]]['Free Users'];
           stddev[current]['Paid'] = 0;
+          var avg = parseFloat(all['Paid Views'] / all['Paid Users']).toFixed(2);
           var subkeys = Object.keys(paidIDs[current]);
           for (var j=0; j<subkeys.length; j++) {
             stddev[current]['Paid'] += (paidIDs[current][subkeys[j]] - avg) * (paidIDs[current][subkeys[j]] - avg);
           }
           stddev[current]['Paid'] = Math.sqrt(stddev[current]['Paid'] / final[keys[i]]['Paid Views']);
-          all['Paid Views'] += final[keys[i]]['Paid Views'];
-          all['Paid Users'] += final[keys[i]]['Paid Users'];
           stddev[current]['Internal'] = 0;
+          var avg = parseFloat(all['Internal Views'] / all['Internal Users']).toFixed(2);
           var subkeys = Object.keys(internalIDs[current]);
           for (var j=0; j<subkeys.length; j++) {
             stddev[current]['Internal'] += (internalIDs[current][subkeys[j]] - avg) * (internalIDs[current][subkeys[j]] - avg);
           }
           stddev[current]['Internal'] = Math.sqrt(stddev[current]['Internal'] / final[keys[i]]['Internal Views']);
-          all['Internal Views'] += final[keys[i]]['Internal Views'];
-          all['Internal Users'] += final[keys[i]]['Internal Users'];
           stddev[current]['Unknown'] = 0;
+          var avg = parseFloat(all['Unknown Views'] / all['Unknown Users']).toFixed(2);
           var subkeys = Object.keys(unknownIDs[current]);
           for (var j=0; j<subkeys.length; j++) {
             stddev[current]['Unknown'] += (unknownIDs[current][subkeys[j]] - avg) * (unknownIDs[current][subkeys[j]] - avg);
           }
           stddev[current]['Unknown'] = Math.sqrt(stddev[current]['Unknown'] / final[keys[i]]['Unknown Views']);
-          all['Unknown Views'] += final[keys[i]]['Unknown Views'];
-          all['Unknown Users'] += final[keys[i]]['Unknown Users'];
           stddev[current]['New'] = 0;
+          var avg = parseFloat(all['New Views'] / all['New Users']).toFixed(2);
           var subkeys = Object.keys(newIDs[current]);
           for (var j=0; j<subkeys.length; j++) {
             stddev[current]['New'] += (newIDs[current][subkeys[j]] - avg) * (newIDs[current][subkeys[j]] - avg);
           }
           stddev[current]['New'] = Math.sqrt(stddev[current]['New'] / final[keys[i]]['New Views']);
-          all['New Views'] += final[keys[i]]['New Views'];
-          all['New Users'] += final[keys[i]]['New Users'];
           stddev[current]['Old'] = 0;
+          var avg = parseFloat(all['Old Views'] / all['Old Users']).toFixed(2);
           var subkeys = Object.keys(oldIDs[current]);
           for (var j=0; j<subkeys.length; j++) {
             stddev[current]['Old'] += (oldIDs[current][subkeys[j]] - avg) * (oldIDs[current][subkeys[j]] - avg);
           }
           stddev[current]['Old'] = Math.sqrt(stddev[current]['Old'] / final[keys[i]]['Old Views']);
-          all['Old Views'] += final[keys[i]]['Old Views'];
-          all['Old Users'] += final[keys[i]]['Old Users'];
         }
         // create kpis using the calculated metrics
         kpis[0] = {'Document': 'All', 'Helpful ratio': 'N/A', 'Helpful score': 'N/A', 'Percent of total views': parseFloat(all['Total Views'] / total * 100).toFixed(2), 'Views per Mixpanel user': parseFloat(all['Internal Views'] / all['Internal Users']).toFixed(2), 'Views per free user': parseFloat(all['Free Views'] / all['Free Users']).toFixed(2), 'Views per new user': parseFloat(all['New Views'] / all['New Users']).toFixed(2), 'Views per old user': parseFloat(all['Old Views'] / all['Old Users']).toFixed(2), 'Views per paid user': parseFloat(all['Paid Views'] / all['Paid Users']).toFixed(2), 'Views per unregistered user': parseFloat(all['Unknown Views'] / all['Unknown Users']).toFixed(2), 'Views per user': parseFloat(all['Total Views'] / all['Unique Views']).toFixed(2)};
