@@ -372,7 +372,7 @@
     $('table#resultsTable').append('</tbody>');
   }
   
-  dateSelect.on('change', function() {$('#resultsTable').remove(); var x = document.createElement("table"); x.setAttribute("id", "resultsTable"); runQuery(); $('#resultsTable').on('click', function() {$('#resultsTable').tablesorter();});});
+  dateSelect.on('change', function() {$('#resultsTable').empty(); runQuery(); $('#resultsTable').on('click', function() {$('#resultsTable').tablesorter();});});
   runQuery();
   $('#resultsTable').on('click', function() {$('#resultsTable').tablesorter();});
   </script>
