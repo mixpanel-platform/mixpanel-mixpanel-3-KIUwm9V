@@ -370,11 +370,11 @@
       );
     });
     $('table#resultsTable').append('</tbody>');
-    $('#resultsTable').on('click', function() {$('#resultsTable').tablesorter();}); 
   }
   
-  dateSelect.on('change', function() {$('#resultsTable').empty(); runQuery();});
+  dateSelect.on('change', function() {$('#resultsTable').empty(); runQuery(); $('#resultsTable').on('click', function() {$('#resultsTable').tablesorter();});});
   runQuery();
+  $('#resultsTable').on('click', function() {$('#resultsTable').tablesorter();});
   </script>
   </body>
 </html>
