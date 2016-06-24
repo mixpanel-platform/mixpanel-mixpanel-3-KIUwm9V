@@ -154,7 +154,7 @@
           } // count metrics if the doc is not a vote
           if(item.key[3] != 'Docs - vote') {
               var date = new Date(Math.round(Number(item.key[8])));
-              var current_date = date.getUTCFullYear() + '-' + (date.getUTCMonth() < 10) ? '0' + (date.getUTCMonth() + 1) : (date.getUTCMonth() + 1) + '-01';
+              var current_date = date.getUTCFullYear() + '-' + (date.getUTCMonth() < 10) ? '0' : '' + (date.getUTCMonth() + 1) + '-01';
               console.log(current_date);
               res[item.key[1]]['Total Views'] += item.value;
               monthly[item.key[1]]['Total Views'][current_date] += item.value;
