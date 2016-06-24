@@ -92,7 +92,7 @@
   var dateSelect = $('#dateSelect').MPDatepicker();
   dateSelectTime = dateSelect.val();
   fromDate = new Date(dateSelectTime.to);
-  fromDate.setDate(fromDate.getDate() - 1);
+  fromDate.setDate(fromDate.getDate() - 60);
   dateSelectTime.from = fromDate;
   dateSelect.val(dateSelectTime);
   var eventGraph  = $('#graph').MPChart({chartType: 'line'});
@@ -146,6 +146,16 @@
             if(item.key[3] != 'Docs - vote') {
               res[item.key[1]] = {'Document URL': item.key[1], 'Total Views': 0, 'Unique Views': 0, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': 0, 'Not Helpful': 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
               monthly[item.key[1]] = res[item.key[1]];
+              var oldest_date = new Date(Math.round(Number(item.key[8])));
+              var date = new Date();
+              var months = date.getUTCMonth() - oldest_date.getUTCMonth();
+              for(i = 0; i < months; i++) {
+                monthly[item.key[1]]['Total Views'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
+                monthly[item.key[1]]['Unique Views'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
+                monthly[item.key[1]]['Free Views'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
+                monthly[item.key[1]]['Free Users'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
+                console.log(monthly);
+              }
             } // create a different object for the doc if it's a vote
             else {
               res[item.key[1]] = {'Document URL': item.key[1], 'Total Views': 0, 'Unique Views': 0, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': (item.key[4] == 'yes') ? 1: 0, 'Not Helpful': (item.key[4] == 'no') ? 1: 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
@@ -155,7 +165,6 @@
           if(item.key[3] != 'Docs - vote') {
               var date = new Date(Math.round(Number(item.key[8])));
               var current_date = date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1) + '-01';
-              console.log(current_date);
               res[item.key[1]]['Total Views'] += item.value;
               monthly[item.key[1]]['Total Views'][current_date] += item.value;
               // Paid user
