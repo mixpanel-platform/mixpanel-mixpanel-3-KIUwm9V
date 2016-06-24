@@ -151,7 +151,7 @@
             }
           } // count metrics if the doc is not a vote
           if(item.key[3] != 'Docs - vote') {
-              var date = new Date(Math.round(Number(x)));
+              var date = new Date(Math.round(Number(item.key[8])));
               var current_date = date.getUTCDate() + '-' + (date.getUTCMonth() + 1)+ '-01';
               res[item.key[1]]['Total Views'] += item.value;
               monthly[item.key[1]]['Total Views'][current_date] += item.value;
