@@ -84,13 +84,13 @@
   Date: <br>
   <div id="dateSelect"></div>
   <div id="table" style='width:943px'></div><br>
-  <table id="resultsTable"></table>
   <script>
   var script_one = document.getElementById('query_one').innerHTML;
   var script_two = document.getElementById('query_two').innerHTML;
   var dateSelect = $('#dateSelect').MPDatepicker();
   var eventTable = $('#table').MPTable({showPercentages: false, firstColHeader: 'Frequency'});
   function runQuery() {
+    $('#table').append('<table id="resultsTable"></table>');
     $('table#resultsTable').append(
       '<thead>' +
       '<tr>' +
@@ -372,7 +372,7 @@
     $('table#resultsTable').append('</tbody>');
   }
   
-  dateSelect.on('change', function() {$('#resultsTable').empty(); runQuery(); $('#resultsTable').on('click', function() {$('#resultsTable').tablesorter();});});
+  dateSelect.on('change', function() {$('#resultsTable').remove(); runQuery(); $('#resultsTable').on('click', function() {$('#resultsTable').tablesorter();});});
   runQuery();
   $('#resultsTable').on('click', function() {$('#resultsTable').tablesorter();});
   </script>
