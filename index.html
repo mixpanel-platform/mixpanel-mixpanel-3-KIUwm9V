@@ -89,6 +89,11 @@
   var script_one = document.getElementById('query_one').innerHTML;
   var script_two = document.getElementById('query_two').innerHTML;
   var dateSelect = $('#dateSelect').MPDatepicker();
+  dateSelectTime = dateSelect.val();
+  fromDate = new Date(dateSelectTime.to);
+  fromDate.setDate(fromDate.getDate() - 7);
+  dateSelectTime.from = fromDate;
+  dateSelect.val(dateSelectTime);
   var eventTable = $('#table').MPTable({showPercentages: false, firstColHeader: 'Frequency'});
   function runQuery() {
     $('#table').append('<table id="resultsTable"></table>');
