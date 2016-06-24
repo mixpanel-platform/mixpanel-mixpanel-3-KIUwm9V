@@ -145,9 +145,11 @@
             // create an object for this doc if its not a vote
             if(item.key[3] != 'Docs - vote') {
               res[item.key[1]] = {'Document URL': item.key[1], 'Total Views': 0, 'Unique Views': 0, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': 0, 'Not Helpful': 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
+              monthly[item.key[1]] = res[item.key[1]];
             } // create a different object for the doc if it's a vote
             else {
               res[item.key[1]] = {'Document URL': item.key[1], 'Total Views': 0, 'Unique Views': 0, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': (item.key[4] == 'yes') ? 1: 0, 'Not Helpful': (item.key[4] == 'no') ? 1: 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
+              monthly[item.key[1]] = res[item.key[1]];
             }
           } // count metrics if the doc is not a vote
           if(item.key[3] != 'Docs - vote') {
