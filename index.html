@@ -134,13 +134,18 @@
         all = {'Document URL': 0, 'Total Views': 0, 'Unique Views': 0, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': 0, 'Not Helpful': 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
         // create object for monthly stats tracking
         month = {'Total Views': {}, 'Unique Views': {}, 'Internal Views': {}, 'Paid Views': {}, 'Free Views': {}, 'Paid Users': {}, 'Internal Users': {}, 'Free Users': {}, 'Total Users': {}, 'Unknown Users': {}, 'New Users': {}, 'Old Users': {}, 'Unknown Views': {}, 'New Views': {}, 'Old Views': {}};
+        graph = {'Views per user': {}, 'Views per free user': {}, 'Views per paid user': {}, 'Views per Mixpanel user': {}, 'Views per unregistered user': {}, 'Views per new user': {}, 'Views per old user': {}};
         var iterate = Math.ceil(((dateSelect.MPDatepicker('value').to - dateSelect.MPDatepicker('value').from) / (30*24*60*60*1000) * 10) / 10).toFixed(0);
         var keys = Object.keys(month);
+        var graphKeys = Object.keys(graph);
         var date = new Date();
         for(i=0; i<iterate; i++) {
+          var current_date = date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01';
           for(j=0; j<keys.length; j++) {
-            var current_date = date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01';
             month[keys[j]][current_date] = 0;
+          }
+          for(j=0; j<graphKeys.length; j++) {
+            month[graphKeys[j]][current_date] = 0;
           }
         }
         console.log(month);
