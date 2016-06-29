@@ -391,7 +391,7 @@
           graph['Views per old user'][graphKeys[i]] = parseFloat(month['Old Views'][graphKeys[i]] / final[keys[i]]['Old Users'][graphKeys[i]]).toFixed(2);
         }
         console.log(graph);
-        eventGraph.MPChart('setData', graph);
+        eventGraph.MPChart('setData', month);
       });
     });
   }
