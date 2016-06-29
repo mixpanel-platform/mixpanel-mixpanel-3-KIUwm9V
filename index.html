@@ -134,7 +134,7 @@
         all = {'Document URL': 0, 'Total Views': 0, 'Unique Views': 0, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': 0, 'Not Helpful': 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
         // create object for monthly stats tracking
         month = {'Total Views': {}, 'Unique Views': {}, 'Internal Views': {}, 'Paid Views': {}, 'Free Views': {}, 'Paid Users': {}, 'Internal Users': {}, 'Free Users': {}, 'Total Users': {}, 'Unknown Users': {}, 'New Users': {}, 'Old Users': {}, 'Unknown Views': {}, 'New Views': {}, 'Old Views': {}};
-        iterate = dateSelect.MPDatepicker('value').from - dateSelect.MPDatepicker('value').to;
+        iterate = Math.floor(dateSelect.MPDatepicker('value').to - dateSelect.MPDatepicker('value').from) / (30*24*60*60*1000);
         console.log(iterate);
         // iterate through event results to count doc metrics
         _.each(results, function(item) {
