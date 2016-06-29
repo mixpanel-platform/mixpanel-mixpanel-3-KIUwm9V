@@ -138,6 +138,8 @@
         for(i=0; i<iterate; i++) {
           _.each(month, function(item) {
             var date = new Date();
+            console.log(item);
+            console.log(item.key);
             var current_date = date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01';
             month[item][current_date] = 0;
           });
