@@ -225,7 +225,7 @@
                   unknownIDs[item.key[1]][item.key[6]] += 1;
                 }
               } // New user
-              else if(item.key[7] == '04/2016' || item.key[7] == '05/2016' || item.key[7] == '06/2016') {
+              else if(item.key[7] == '01/2016' || item.key[7] == '02/2016' || item.key[7] == '03/2016' || item.key[7] == '04/2016' || item.key[7] == '05/2016' || item.key[7] == '06/2016') {
                 res[item.key[1]]['New Views'] += 1;
                 month['New Views'][current_date] += item.value;
                 if(!(item.key[6] in newIDs[item.key[1]])) {
@@ -384,7 +384,7 @@
           graph['Views per user'][graphKeys[i]] = parseFloat(month['Total Views'][graphKeys[i]] / month['Unique Views'][graphKeys[i]]).toFixed(2);
           graph['Views per free user'][graphKeys[i]] = parseFloat(month['Free Views'][graphKeys[i]] / month['Free Users'][graphKeys[i]]).toFixed(2);
           graph['Views per paid user'][graphKeys[i]] = parseFloat(month['Paid Views'][graphKeys[i]] / month['Paid Users'][graphKeys[i]]).toFixed(2);
-          graph['Views per Mixpanel user'][graphKeys[i]] = parseFloat(month['Internal Views'][graphKeys[i]] / ['Internal Users'][graphKeys[i]]).toFixed(2);
+          graph['Views per Mixpanel user'][graphKeys[i]] = parseFloat(month['Internal Views'][graphKeys[i]] / month['Internal Users'][graphKeys[i]]).toFixed(2);
           graph['Views per unregistered user'][graphKeys[i]] = parseFloat(month['Unknown Views'][graphKeys[i]] / month['Unknown Users'][graphKeys[i]]).toFixed(2);
           graph['Views per new user'][graphKeys[i]] = parseFloat(month['New Views'][graphKeys[i]] / month['New Users'][graphKeys[i]]).toFixed(2);
           graph['Views per old user'][graphKeys[i]] = parseFloat(month['Old Views'][graphKeys[i]] / month['Old Users'][graphKeys[i]]).toFixed(2);
