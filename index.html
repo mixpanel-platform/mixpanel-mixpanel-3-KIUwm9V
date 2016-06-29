@@ -120,7 +120,6 @@
       'from_date': dateSelect.MPDatepicker('value').from.toISOString().slice(0, -14),
       'to_date': dateSelect.MPDatepicker('value').to.toISOString().slice(0, -14),
     };
-    eventGraph.MPChart('setData', {'Loading': 'Loading'});
     MP.api.jql(script_one, params).done(function(results) {
       MP.api.jql(script_two, {}).done(function(users) {
         // define local vars
