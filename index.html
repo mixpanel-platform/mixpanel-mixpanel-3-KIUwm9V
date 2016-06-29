@@ -123,7 +123,7 @@
     MP.api.jql(script_one, params).done(function(results) {
       MP.api.jql(script_two, {}).done(function(users) {
         // define local vars
-        var domains = []; var IDs = {}; var paidIDs = {}; var internalIDs = {}; var freeIDs = {}; var newIDs = {}; var oldIDs = {}; var unknownIDs ={}; var res = {}; var toSort = []; var sorted = []; var final = {}; var kpis = {};var total = 0; var stddev = {}; var all = {}; var monthly = {};
+        var domains = []; var IDs = {}; var paidIDs = {}; var internalIDs = {}; var freeIDs = {}; var newIDs = {}; var oldIDs = {}; var unknownIDs ={}; var res = {}; var toSort = []; var sorted = []; var final = {}; var kpis = {};var total = 0; var stddev = {}; var all = {}; var month = {}; var graph = {};
         // iterate through the user results to find domains of paid customers
         _.each(users, function(item){
           if(item.key[1] !== undefined) {
@@ -132,6 +132,8 @@
         });
         // create object for overall metrics
         all = {'Document URL': 0, 'Total Views': 0, 'Unique Views': 0, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': 0, 'Not Helpful': 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
+        // create object for monthly stats tracking
+        month = {'Total Views': {}, 'Unique Views': {}, 'Internal Views': {}, 'Paid Views': {}, 'Free Views': {}, 'Paid Users': {}, 'Internal Users': {}, 'Free Users': {}, 'Total Users': {}, 'Unknown Users': {}, 'New Users': {}, 'Old Users': {}, 'Unknown Views': {}, 'New Views': {}, 'Old Views': {}};
         // iterate through event results to count doc metrics
         _.each(results, function(item) {
           // if doc does not yet exist, add a record in our objects
@@ -145,28 +147,6 @@
             // create an object for this doc if its not a vote
             if(item.key[3] != 'Docs - vote') {
               res[item.key[1]] = {'Document URL': item.key[1], 'Total Views': 0, 'Unique Views': 0, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': 0, 'Not Helpful': 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
-              monthly[item.key[1]] = {'Document URL': item.key[1], 'Total Views': {}, 'Unique Views': {}, 'Internal Views': {}, 'Paid Views': {}, 'Free Views': {}, 'Paid Users': {}, 'Internal Users': {}, 'Free Users': {}, 'Total Users': {}, 'Unknown Users': {}, 'New Users': {}, 'Old Users': {}, 'Unknown Views': {}, 'New Views': {}, 'Old Views': {}};
-              var oldest_date = new Date(Math.round(Number(item.key[8])));
-              var date = new Date();
-              var months = date.getUTCMonth() - oldest_date.getUTCMonth();
-              for(i = 0; i < months; i++) {
-                var current_date = date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01';
-                monthly[item.key[1]]['Total Views'][current_date] = 0;
-                monthly[item.key[1]]['Unique Views'][current_date] = 0;
-                monthly[item.key[1]]['Free Views'][current_date] = 0;
-                monthly[item.key[1]]['Free Users'][current_date] = 0;
-                monthly[item.key[1]]['Paid Views'][current_date] = 0;
-                monthly[item.key[1]]['Paid Users'][current_date] = 0;
-                monthly[item.key[1]]['Internal Views'][current_date] = 0;
-                monthly[item.key[1]]['Internal Users'][current_date] = 0;
-                monthly[item.key[1]]['Unknown Views'][current_date] = 0;
-                monthly[item.key[1]]['Unknown Users'][current_date] = 0;
-                monthly[item.key[1]]['New Views'][current_date] = 0;
-                monthly[item.key[1]]['New Users'][current_date] = 0;
-                monthly[item.key[1]]['Old Views'][current_date] = 0;
-                monthly[item.key[1]]['Old Users'][current_date] = 0;
-              }
-              console.log(monthly);
             } // create a different object for the doc if it's a vote
             else {
               res[item.key[1]] = {'Document URL': item.key[1], 'Total Views': 0, 'Unique Views': 0, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': (item.key[4] == 'yes') ? 1: 0, 'Not Helpful': (item.key[4] == 'no') ? 1: 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
@@ -176,65 +156,77 @@
           if(item.key[3] != 'Docs - vote') {
               var date = new Date(Math.round(Number(item.key[8])));
               var current_date = date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1) + '-01';
+              month['Total Views'][current_date] += item.value;
               res[item.key[1]]['Total Views'] += item.value;
-              monthly[item.key[1]]['Total Views'][current_date] += item.value;
               // Paid user
               if(item.key[2] !== null && domains.indexOf(item.key[2].split("@")[1]) > -1  && item.key[2].split("@")[1] != "mixpanel.com") {
                 res[item.key[1]]['Paid Views'] += item.value;
-                monthly[item.key[1]]['Paid Views'][current_date] += item.value;
+                month['Paid Views'][current_date] += item.value;
                 if(!(item.key[6] in paidIDs[item.key[1]])) {
                   paidIDs[item.key[1]][item.key[6]] = 1;
                   res[item.key[1]]['Paid Users'] += 1;
                   res[item.key[1]]['Unique Views'] += 1;
-                  monthly[item.key[1]]['Paid Users'][current_date] += 1;
-                  monthly[item.key[1]]['Unique Views'][current_date] += 1;
+                  month['Paid Users'][current_date] += item.value;
+                  month['Unqiue Views'][current_date] += item.value;
                 } else {
                   paidIDs[item.key[1]][item.key[6]] += 1;
                 }
               } // Mixpanel user
               else if (item.key[2] !== null && item.key[2].split("@")[1] == "mixpanel.com") {
                 res[item.key[1]]['Internal Views'] += item.value;
+                month['Internal Views'][current_date] += item.value;
                 if(!(item.key[6] in internalIDs[item.key[1]])) {
                   internalIDs[item.key[1]][item.key[6]] = 1;
                   res[item.key[1]]['Internal Users'] += 1;
                   res[item.key[1]]['Unique Views'] += 1;
+                  month['Internal Users'][current_date] += item.value;
+                  month['Unique Views'][current_date] += item.value;
                 } else {
                   internalIDs[item.key[1]][item.key[6]] += 1;
                 }
               } // Free user
               else {
                 res[item.key[1]]['Free Views'] += item.value;
+                month['Free Views'][current_date] += item.value;
                 if(!(item.key[6] in freeIDs[item.key[1]])) {
                   freeIDs[item.key[1]][item.key[6]] = 1;
                   res[item.key[1]]['Free Users'] += 1;
                   res[item.key[1]]['Unique Views'] += 1;
+                  month['Free Users'][current_date] += item.value;
+                  month['Unique Views'][current_date] += item.value;
                 } else {
                   freeIDs[item.key[1]][item.key[6]] += 1;
                 }
               } // Unknown user
               if(item.key[7] === undefined || item.key[7] === null) {
                 res[item.key[1]]['Unknown Views'] += 1;
+                month['Unknown Views'][current_date] += item.value;
                 if(!(item.key[6] in unknownIDs[item.key[1]])) {
                   unknownIDs[item.key[1]][item.key[6]] = 1;
                   res[item.key[1]]['Unknown Users'] += 1;
+                  month['Unknown Users'][current_date] += item.value;
                 } else {
                   unknownIDs[item.key[1]][item.key[6]] += 1;
                 }
               } // New user
               else if(item.key[7] == '04/2016' || item.key[7] == '05/2016' || item.key[7] == '06/2016') {
                 res[item.key[1]]['New Views'] += 1;
+                month['New Views'][current_date] += item.value;
                 if(!(item.key[6] in newIDs[item.key[1]])) {
                   newIDs[item.key[1]][item.key[6]] = 1;
                   res[item.key[1]]['New Users'] += 1;
+                  month['New Users'][current_date] += item.value;
                 } else {
                   newIDs[item.key[1]][item.key[6]] += 1;
                 }
               } // Old user
               else {
                 res[item.key[1]]['Old Views'] += 1;
+                month['Old Views'][current_date] += item.value;
                 if(!(item.key[6] in oldIDs[item.key[1]])) {
                   oldIDs[item.key[1]][item.key[6]] = 1;
                   res[item.key[1]]['Old Users'] += 1;
+                  month['Old Users'][current_date] += item.value;
                 } else {
                   oldIDs[item.key[1]][item.key[6]] += 1;
                 }
@@ -257,7 +249,7 @@
               }
             }
         });
-        console.log(monthly);
+        console.log(month);
         // sort the docs based on total views
         for (var key in res) {
           toSort.push({key:key,total:res[key]['Total Views']});
@@ -368,6 +360,19 @@
         }
         console.log(kpis);
         chartIt(kpis);
+        // create graph MoM change using the calculate metrics
+        var graphKeys = Object.keys(month['Total Views']);
+        for(var i=0; i<graphKeys.length; i++) {
+          graph['Views per user'][graphKeys[i]] = parseFloat(month['Total Views'][graphKeys[i]] / month['Unique Views'][graphKeys[i]]).toFixed(2);
+          graph['Views per free user'][graphKeys[i]] = parseFloat(month['Free Views'][graphKeys[i]] / final[keys[i]]['Free Users'][graphKeys[i]]).toFixed(2);
+          graph['Views per paid user'][graphKeys[i]] = parseFloat(month['Paid Views'][graphKeys[i]] / final[keys[i]]['Paid Users'][graphKeys[i]]).toFixed(2);
+          graph['Views per Mixpanel user'][graphKeys[i]] = parseFloat(month['Internal Views'][graphKeys[i]] / final[keys[i]]['Internal Users'][graphKeys[i]]).toFixed(2);
+          graph['Views per unregistered user'][graphKeys[i]] = parseFloat(month['Unknown Views'][graphKeys[i]] / final[keys[i]]['Unknown Users'][graphKeys[i]]).toFixed(2);
+          graph['Views per new user'][graphKeys[i]] = parseFloat(month['New Views'][graphKeys[i]] / final[keys[i]]['New Users'][graphKeys[i]]).toFixed(2);
+          graph['Views per old user'][graphKeys[i]] = parseFloat(month['Old Views'][graphKeys[i]] / final[keys[i]]['Old Users'][graphKeys[i]]).toFixed(2);
+        }
+        console.log(graph);
+        eventGraph.setData(graph);
       });
     });
   }
