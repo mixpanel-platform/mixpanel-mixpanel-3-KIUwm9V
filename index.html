@@ -380,8 +380,9 @@
         console.log(kpis);
         chartIt(kpis);
         // create graph MoM change using the calculate metrics
-        var graphKeys = Object.keys(month['Total Views']);
+        var graphKeys = Object.keys(graph['Views per user']);
         for(var i=0; i<graphKeys.length; i++) {
+          console.log()
           graph['Views per user'][graphKeys[i]] = parseFloat(month['Total Views'][graphKeys[i]] / month['Unique Views'][graphKeys[i]]).toFixed(2);
           graph['Views per free user'][graphKeys[i]] = parseFloat(month['Free Views'][graphKeys[i]] / final[keys[i]]['Free Users'][graphKeys[i]]).toFixed(2);
           graph['Views per paid user'][graphKeys[i]] = parseFloat(month['Paid Views'][graphKeys[i]] / final[keys[i]]['Paid Users'][graphKeys[i]]).toFixed(2);
