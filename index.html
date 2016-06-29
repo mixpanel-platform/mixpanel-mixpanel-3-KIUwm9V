@@ -149,8 +149,6 @@
           }
           
         }
-        console.log(graph);
-        console.log(month);
         // iterate through event results to count doc metrics
         _.each(results, function(item) {
           // if doc does not yet exist, add a record in our objects
@@ -376,11 +374,8 @@
         console.log(kpis);
         chartIt(kpis);
         // create graph MoM change using the calculate metrics
-        console.log(graph);
-        console.log(month);
         var graphKeys = Object.keys(graph['Views per user']);
         for(var i=0; i<graphKeys.length; i++) {
-          console.log(graphKeys[i]);
           graph['Views per user'][graphKeys[i]] = Number(parseFloat(month['Total Views'][graphKeys[i]] / month['Unique Views'][graphKeys[i]]).toFixed(2));
           graph['Views per free user'][graphKeys[i]] = Number(parseFloat(month['Free Views'][graphKeys[i]] / month['Free Users'][graphKeys[i]]).toFixed(2));
           graph['Views per paid user'][graphKeys[i]] = Number(parseFloat(month['Paid Views'][graphKeys[i]] / month['Paid Users'][graphKeys[i]]).toFixed(2));
