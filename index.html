@@ -264,7 +264,6 @@
               }
             }
         });
-        console.log(month);
         // sort the docs based on total views
         for (var key in res) {
           toSort.push({key:key,total:res[key]['Total Views']});
@@ -376,6 +375,8 @@
         console.log(kpis);
         chartIt(kpis);
         // create graph MoM change using the calculate metrics
+        console.log(graph);
+        console.log(month);
         var graphKeys = Object.keys(graph['Views per user']);
         for(var i=0; i<graphKeys.length; i++) {
           console.log(graphKeys[i]);
