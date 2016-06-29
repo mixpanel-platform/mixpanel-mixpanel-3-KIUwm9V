@@ -134,17 +134,15 @@
         all = {'Document URL': 0, 'Total Views': 0, 'Unique Views': 0, 'Internal Views': 0, 'Paid Views': 0, 'Free Views': 0, 'Helpful': 0, 'Not Helpful': 0, 'Via Search': 0, 'Via MP Search': 0, 'Paid Users': 0, 'Internal Users': 0, 'Free Users': 0, 'Total Users': 0, 'Unknown Users': 0, 'New Users': 0, 'Old Users': 0, 'Unknown Views': 0, 'New Views': 0, 'Old Views': 0};
         // create object for monthly stats tracking
         month = {'Total Views': {}, 'Unique Views': {}, 'Internal Views': {}, 'Paid Views': {}, 'Free Views': {}, 'Paid Users': {}, 'Internal Users': {}, 'Free Users': {}, 'Total Users': {}, 'Unknown Users': {}, 'New Users': {}, 'Old Users': {}, 'Unknown Views': {}, 'New Views': {}, 'Old Views': {}};
-        iterate = Math.ceil(((dateSelect.MPDatepicker('value').to - dateSelect.MPDatepicker('value').from) / (30*24*60*60*1000) * 10) / 10).toFixed(0);
+        var iterate = Math.ceil(((dateSelect.MPDatepicker('value').to - dateSelect.MPDatepicker('value').from) / (30*24*60*60*1000) * 10) / 10).toFixed(0);
+        var keys = Object.keys(month);
         for(i=0; i<iterate; i++) {
-          _.each(month, function(item) {
-            var date = new Date();
-            console.log(item);
-            console.log(item.key);
+          for(j=0; j<keys.length; j++) {
             var current_date = date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01';
-            month[item][current_date] = 0;
-          });
+            month[keys[j]][current_date] = 0;
+          }
         }
-        console.log(iterate);
+        console.log(month);
         // iterate through event results to count doc metrics
         _.each(results, function(item) {
           // if doc does not yet exist, add a record in our objects
