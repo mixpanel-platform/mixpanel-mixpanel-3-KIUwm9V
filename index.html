@@ -135,6 +135,12 @@
         // create object for monthly stats tracking
         month = {'Total Views': {}, 'Unique Views': {}, 'Internal Views': {}, 'Paid Views': {}, 'Free Views': {}, 'Paid Users': {}, 'Internal Users': {}, 'Free Users': {}, 'Total Users': {}, 'Unknown Users': {}, 'New Users': {}, 'Old Users': {}, 'Unknown Views': {}, 'New Views': {}, 'Old Views': {}};
         iterate = Math.ceil(((dateSelect.MPDatepicker('value').to - dateSelect.MPDatepicker('value').from) / (30*24*60*60*1000) * 10) / 10).toFixed(0);
+        for(i=0; i<iterate; i++) {
+          _.each(month, function(item)) {
+            var current_date = date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01';
+            month[item][current_date] = 0;
+          }
+        }
         console.log(iterate);
         // iterate through event results to count doc metrics
         _.each(results, function(item) {
