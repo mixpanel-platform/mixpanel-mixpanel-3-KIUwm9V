@@ -150,20 +150,21 @@
               var date = new Date();
               var months = date.getUTCMonth() - oldest_date.getUTCMonth();
               for(i = 0; i < months; i++) {
-                monthly[item.key[1]]['Total Views'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
-                monthly[item.key[1]]['Unique Views'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
-                monthly[item.key[1]]['Free Views'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
-                monthly[item.key[1]]['Free Users'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
-                monthly[item.key[1]]['Paid Views'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
-                monthly[item.key[1]]['Paid Users'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
-                monthly[item.key[1]]['Internal Views'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
-                monthly[item.key[1]]['Internal Users'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
-                monthly[item.key[1]]['Unknown Views'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
-                monthly[item.key[1]]['Unknown Users'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
-                monthly[item.key[1]]['New Views'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
-                monthly[item.key[1]]['New Users'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
-                monthly[item.key[1]]['Old Views'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
-                monthly[item.key[1]]['Old Users'][date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01'] = 0;
+                var current_date = date.getUTCFullYear() + '-' + ((date.getUTCMonth() < 10) ? '0' : '') + (date.getUTCMonth() + 1 - i) + '-01';
+                monthly[item.key[1]]['Total Views'][current_date] = 0;
+                monthly[item.key[1]]['Unique Views'][current_date] = 0;
+                monthly[item.key[1]]['Free Views'][current_date] = 0;
+                monthly[item.key[1]]['Free Users'][current_date] = 0;
+                monthly[item.key[1]]['Paid Views'][current_date] = 0;
+                monthly[item.key[1]]['Paid Users'][current_date] = 0;
+                monthly[item.key[1]]['Internal Views'][current_date] = 0;
+                monthly[item.key[1]]['Internal Users'][current_date] = 0;
+                monthly[item.key[1]]['Unknown Views'][current_date] = 0;
+                monthly[item.key[1]]['Unknown Users'][current_date] = 0;
+                monthly[item.key[1]]['New Views'][current_date] = 0;
+                monthly[item.key[1]]['New Users'][current_date] = 0;
+                monthly[item.key[1]]['Old Views'][current_date] = 0;
+                monthly[item.key[1]]['Old Users'][current_date] = 0;
               }
               console.log(monthly);
             } // create a different object for the doc if it's a vote
