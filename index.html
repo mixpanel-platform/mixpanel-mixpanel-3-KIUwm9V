@@ -382,15 +382,15 @@
         for(var i=0; i<graphKeys.length; i++) {
           console.log(graphKeys[i]);
           graph['Views per user'][graphKeys[i]] = parseFloat(month['Total Views'][graphKeys[i]] / month['Unique Views'][graphKeys[i]]).toFixed(2);
-          graph['Views per free user'][graphKeys[i]] = parseFloat(month['Free Views'][graphKeys[i]] / final[keys[i]]['Free Users'][graphKeys[i]]).toFixed(2);
-          graph['Views per paid user'][graphKeys[i]] = parseFloat(month['Paid Views'][graphKeys[i]] / final[keys[i]]['Paid Users'][graphKeys[i]]).toFixed(2);
-          graph['Views per Mixpanel user'][graphKeys[i]] = parseFloat(month['Internal Views'][graphKeys[i]] / final[keys[i]]['Internal Users'][graphKeys[i]]).toFixed(2);
-          graph['Views per unregistered user'][graphKeys[i]] = parseFloat(month['Unknown Views'][graphKeys[i]] / final[keys[i]]['Unknown Users'][graphKeys[i]]).toFixed(2);
-          graph['Views per new user'][graphKeys[i]] = parseFloat(month['New Views'][graphKeys[i]] / final[keys[i]]['New Users'][graphKeys[i]]).toFixed(2);
-          graph['Views per old user'][graphKeys[i]] = parseFloat(month['Old Views'][graphKeys[i]] / final[keys[i]]['Old Users'][graphKeys[i]]).toFixed(2);
+          graph['Views per free user'][graphKeys[i]] = parseFloat(month['Free Views'][graphKeys[i]] / month['Free Users'][graphKeys[i]]).toFixed(2);
+          graph['Views per paid user'][graphKeys[i]] = parseFloat(month['Paid Views'][graphKeys[i]] / month['Paid Users'][graphKeys[i]]).toFixed(2);
+          graph['Views per Mixpanel user'][graphKeys[i]] = parseFloat(month['Internal Views'][graphKeys[i]] / ['Internal Users'][graphKeys[i]]).toFixed(2);
+          graph['Views per unregistered user'][graphKeys[i]] = parseFloat(month['Unknown Views'][graphKeys[i]] / month['Unknown Users'][graphKeys[i]]).toFixed(2);
+          graph['Views per new user'][graphKeys[i]] = parseFloat(month['New Views'][graphKeys[i]] / month['New Users'][graphKeys[i]]).toFixed(2);
+          graph['Views per old user'][graphKeys[i]] = parseFloat(month['Old Views'][graphKeys[i]] / month['Old Users'][graphKeys[i]]).toFixed(2);
         }
         console.log(graph);
-        eventGraph.MPChart('setData', month);
+        eventGraph.MPChart('setData', graph);
       });
     });
   }
